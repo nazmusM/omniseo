@@ -1,0 +1,168 @@
+<?php
+// Ensure user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header('Location: ../login');
+    exit();
+}
+
+// Get user info
+$stmt = $db->prepare("SELECT name, email, credits, plan, created_at FROM users WHERE id = ?");
+$stmt->bind_param("i", $_SESSION['user_id']);
+$stmt->execute();
+$user = $stmt->get_result()->fetch_assoc();
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo $title . '-' .  SITE_NAME ?></title>
+    <link rel="stylesheet" href="../assets/css/dashboard.css?v=<?= time(); ?>">
+    <link rel="stylesheet" href="<?= $stylesheet . '?v=' . time(); ?>">
+    <script src="../assets/sweetalert/sweetalert.min.js"></script>
+    <script src="../assets/js/main.js?v=<?=time();?>"></script>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <div class="navbar">
+            <div class="mobile-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    width="20" height="20" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    role="img" aria-label="Menu">
+                    <title>Menu</title>
+                    <rect x="3" y="5" width="18" height="1" rx="1" />
+                    <rect x="3" y="11" width="18" height="1" rx="1" />
+                    <rect x="3" y="17" width="18" height="1" rx="1" />
+                </svg>
+
+            </div>
+            <div class="navbar-header">
+                <div class="logo">
+                    <h2>omniSEO</h2>
+                </div>
+            </div>
+            <div class="nav-right-menu">
+                <div class="credits-badge">
+                    <span class="credits-count"><?php echo $user['credits']; ?></span>
+                    <span class="credits-label">Credits</span>
+                </div>
+                <div class="plan-upgrade">
+                    <a href="../plans" class="credits-badge btn-primary">Upgrade Plan</a>
+                    <a href="../credits" class="credits-badge btn-secondary">Buy Credits</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <h2>omniSEO</h2>
+                </div>
+                <div class="close-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        width="20" height="20" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        role="img" aria-label="Close">
+                        <title>Close</title>
+                        <line x1="4" y1="4" x2="20" y2="20" />
+                        <line x1="20" y1="4" x2="4" y2="20" />
+                    </svg>
+
+                </div>
+            </div>
+
+            <div class="user-info">
+                <div class="user-details">
+                    <h4><?php echo htmlspecialchars($user['name']); ?></h4>
+                    <p><?php echo htmlspecialchars($user['email']); ?></p>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="<?php echo basename($_SERVER['REQUEST_URI']) == 'dashboard' ? 'active' : ''; ?>">
+                        <a href="../dashboard">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7" />
+                                <rect x="14" y="3" width="7" height="7" />
+                                <rect x="14" y="14" width="7" height="7" />
+                                <rect x="3" y="14" width="7" height="7" />
+                            </svg>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="<?php echo basename($_SERVER['REQUEST_URI']) == 'article-generator' ? 'active' : ''; ?>">
+                        <a href="../article-generator">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <polyline points="14,2 14,8 20,8" />
+                                <line x1="16" y1="13" x2="8" y2="13" />
+                                <line x1="16" y1="17" x2="8" y2="17" />
+                                <polyline points="10,9 9,9 8,9" />
+                            </svg>
+                            Article Generator
+                        </a>
+                    </li>
+                    <li class="<?php echo basename($_SERVER['REQUEST_URI']) == 'history' ? 'active' : ''; ?>">
+                        <a href="../history">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <polyline points="12,6 12,12 16,14" />
+                            </svg>
+                            History
+                        </a>
+                    </li>
+                    <li class="<?php echo basename($_SERVER['REQUEST_URI']) == 'account' ? 'active' : ''; ?>">
+                        <a href="../account">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                            Account
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="../logout" class="logout-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16,17 21,12 16,7" />
+                        <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                    Logout
+                </a>
+            </div>
+        </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+            const mobileToggle = document.querySelector(".mobile-toggle");
+            const sidebar = document.querySelector(".sidebar");
+            const closeBtn = document.querySelector(".close-btn");
+
+            mobileToggle.addEventListener("click", function() {
+                sidebar.classList.toggle('open');
+            })
+
+            closeBtn.addEventListener("click", function(){
+                if(sidebar.classList.contains("open")){
+                    sidebar.classList.remove("open")
+                }
+            })
+
+            document.addEventListener("click", (e) => {
+    const target = e.target;
+
+    if (mobileToggle && sidebar) {
+      if (!mobileToggle.contains(target) && !sidebar.contains(target)) {
+        sidebar.classList.remove("open");
+      }
+    }
+  });
+        })
+        </script>
