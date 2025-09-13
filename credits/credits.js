@@ -1,4 +1,5 @@
 let currentPackage = null
+const modal = document.querySelector(".modal");
 
 function purchaseCredits(packageId, price, credits) {
   // Find the package details
@@ -17,11 +18,11 @@ function purchaseCredits(packageId, price, credits) {
   document.getElementById("packagePrice").textContent = "$" + currentPackage.price
 
   // Show modal
-  document.getElementById("purchaseModal").style.display = "block"
+ modal.classList.toggle('show');
 }
 
 function closePurchaseModal() {
-  document.getElementById("purchaseModal").style.display = "none"
+modal.classList.remove('show');
   currentPackage = null
 }
 

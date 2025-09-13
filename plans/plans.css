@@ -318,7 +318,9 @@ input:checked + .slider:before {
 
 /* Modal Styles */
 .modal {
-  display: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: fixed;
   z-index: 1000;
   left: 0;
@@ -327,6 +329,16 @@ input:checked + .slider:before {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
+  transform: scale(.7);
+  opacity: 0;
+  pointer-events: none;
+  transition: .3s ease;
+}
+
+.modal.show{
+  transform: scale(1);
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .modal-content {
@@ -444,7 +456,6 @@ input:checked + .slider:before {
   }
 
   .modal-content {
-    margin: 10% auto;
     width: 95%;
   }
 }

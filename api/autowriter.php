@@ -19,7 +19,6 @@ if (!$auth->isLoggedIn()) {
 $user = $auth->getCurrentUser();
 $input = json_decode(file_get_contents('php://input'), true);
 $action = $input['action'] ?? '';
-
 if (!$action) {
     echo json_encode(['error' => 'No action specified']);
     exit;
@@ -28,9 +27,10 @@ if (!$action) {
 $user_id = $_SESSION['user_id'];
 
 // Define credit costs
-define('ARTICLE_CREDITS', 10);
-define('KEYWORD_CREDITS', 1);
-define('IMAGE_CREDITS', 5);
+define('ARTICLE_CREDITS', 1500);
+define('KEYWORD_CREDITS', 10);
+define('IMAGE_CREDITS', 200);
+define('TITLE_CREDITS', 200);
 
 // -------------------- CREDIT MANAGEMENT --------------------
 function checkCredits($db, $user_id, $creditsRequired) {
@@ -53,26 +53,39 @@ function checkCredits($db, $user_id, $creditsRequired) {
 }
 
 function deductCredits($db, $user_id, $creditsToDeduct, $action) {
-    $stmt = $db->prepare("UPDATE users SET credits = credits - ? WHERE id = ? AND credits >= ?");
-    $stmt->bind_param("iii", $creditsToDeduct, $user_id, $creditsToDeduct);
-    $stmt->execute();
+    // Start transaction for atomic operation
+    $db->begin_transaction();
     
-    if ($stmt->affected_rows === 0) {
+    try {
+        // Update user credits
+        $stmt = $db->prepare("UPDATE users SET credits = credits - ? WHERE id = ? AND credits >= ?");
+        $stmt->bind_param("iii", $creditsToDeduct, $user_id, $creditsToDeduct);
+        $stmt->execute();
+        
+        if ($stmt->affected_rows === 0) {
+            $db->rollback();
+            return false;
+        }
+        
+        // Log credit usage
+        $stmt = $db->prepare("INSERT INTO credit_usage (user_id, credits_used, action, timestamp) VALUES (?, ?, ?, NOW())");
+        $stmt->bind_param("iis", $user_id, $creditsToDeduct, $action);
+        $stmt->execute();
+        
+        $db->commit();
+        return true;
+        
+    } catch (Exception $e) {
+        $db->rollback();
+        error_log("Credit deduction error: " . $e->getMessage());
         return false;
     }
-    
-    // Log credit usage
-    $stmt = $db->prepare("INSERT INTO credit_usage (user_id, credits_used, action, timestamp) VALUES (?, ?, ?, NOW())");
-    $stmt->bind_param("iis", $user_id, $creditsToDeduct, $action);
-    $stmt->execute();
-    
-    return true;
 }
 
 // -------------------- UTILITY --------------------
 function callOpenAI($messages, $max_tokens = 1000) {
     $payload = [
-        'model' => 'mistralai/mistral-7b-instruct:free',
+        'model' => 'deepseek/deepseek-chat-v3.1:free',
         'messages' => $messages,
         'max_tokens' => $max_tokens,
         'temperature' => 0.7,
@@ -120,31 +133,30 @@ function callOpenAI($messages, $max_tokens = 1000) {
 }
 
 function generateImage($prompt, $size = '1024x1024') {
-    // Check if OpenAI API key is configured
-    if (!defined('OPENAI_API_KEY') || empty(OPENAI_API_KEY)) {
-        return ['error' => 'Image generation not configured'];
-    }
-    
+    // Use OpenRouter's free image generation (Stable Diffusion)
     $payload = [
+        'model' => 'google/gemini-2.5-flash-image-preview:free',
         'prompt' => $prompt,
-        'n' => 1,
         'size' => $size,
-        'response_format' => 'url'
+        'n' => 1
     ];
-    
-    $ch = curl_init('https://api.openai.com/v1/images/generations');
+
+    $ch = curl_init();
     curl_setopt_array($ch, [
-        CURLOPT_HTTPHEADER => [
-            'Content-Type: application/json',
-            'Authorization: Bearer ' . OPENAI_API_KEY
-        ],
+        CURLOPT_URL => 'https://openrouter.ai/api/v1/images',
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_POST => true,
         CURLOPT_POSTFIELDS => json_encode($payload),
+        CURLOPT_HTTPHEADER => [
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $_ENV['OPENROUTER_API_KEY'],
+            'HTTP-Referer: ' . (isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : 'https://omniseo.com'),
+            'X-Title: omniSEO Image Generator'
+        ],
         CURLOPT_TIMEOUT => 30
     ]);
     
-    $result = curl_exec($ch);
+    $response = curl_exec($ch);
     
     if (curl_errno($ch)) {
         $error = curl_error($ch);
@@ -153,7 +165,7 @@ function generateImage($prompt, $size = '1024x1024') {
     }
     
     curl_close($ch);
-    $data = json_decode($result, true);
+    $data = json_decode($response, true);
     
     if (isset($data['error'])) {
         return ['error' => 'API error: ' . $data['error']['message']];
@@ -168,14 +180,6 @@ function generateImage($prompt, $size = '1024x1024') {
 
 // -------------------- Build Prompt --------------------------
 function buildArticlePrompt($topic, $keywords, $instructions, $tone, $wordCount, $language) {
-    $contentTypeTemplates = [
-        'blog_post' => "Write a comprehensive blog post about: {$topic}",
-        'product_description' => "Create a compelling product description for: {$topic}",
-        'landing_page' => "Write persuasive landing page copy for: {$topic}",
-        'news_article' => "Write a news article about: {$topic}",
-        'technical_guide' => "Create a technical guide about: {$topic}"
-    ];
-    
     $prompt = "Write a comprehensive article about: {$topic}\n\n";
     
     if (!empty($keywords)) {
@@ -207,51 +211,41 @@ function buildArticlePrompt($topic, $keywords, $instructions, $tone, $wordCount,
 
 // -------------------- Process Output ------------------------
 function processAiOutput($aiOutput) {
-    // Extract title (look for **Title: ...** pattern)
-    $title = '';
-    if (preg_match('/\*\*Title:\s*(.*?)\*\*/', $aiOutput, $titleMatches)) {
-        $title = trim($titleMatches[1]);
-        // Remove the title from the content
-        $aiOutput = str_replace($titleMatches[0], '', $aiOutput);
-    }
-    
-    // Extract meta description (look for **Meta Description:** ... pattern)
     $metaDescription = '';
-    if (preg_match('/\*\*Meta Description:\*\*\s*(.*?)(?=\*\*|$)/s', $aiOutput, $metaMatches)) {
-        $metaDescription = trim($metaMatches[1]);
-        // Remove the meta description from the content
-        $aiOutput = str_replace($metaMatches[0], '', $aiOutput);
+    $title = '';
+
+    // Extract meta description suggestion
+    if (preg_match('/<!--\s*Meta Description Suggestion:\s*(.*?)\s*-->/is', $aiOutput, $metaMatch)) {
+        $metaDescription = trim($metaMatch[1]);
+        $aiOutput = str_replace($metaMatch[0], '', $aiOutput);
     }
-    
-    // Extract title tag (look for **Title Tag:** ... pattern)
-    $titleTag = '';
-    if (preg_match('/\*\*Title Tag:\*\*\s*(.*?)(?=\*\*|$)/s', $aiOutput, $titleTagMatches)) {
-        $titleTag = trim($titleTagMatches[1]);
-        // Remove the title tag from the content
-        $aiOutput = str_replace($titleTagMatches[0], '', $aiOutput);
+
+    // Extract title tag suggestion
+    if (preg_match('/<!--\s*Title Tag Suggestion:\s*(.*?)\s*-->/is', $aiOutput, $titleTagMatch)) {
+        $title = trim($titleTagMatch[1]);
+        $aiOutput = str_replace($titleTagMatch[0], '', $aiOutput);
     }
+
+    // Clean up any remaining HTML comments
+    $aiOutput = preg_replace('/<!--.*?-->/s', '', $aiOutput);
     
-    // Clean up the content - remove any remaining double asterisks used for formatting
-    $aiOutput = preg_replace('/\*\*(.*?)\*\*/', '$1', $aiOutput);
-    
-    // Trim extra whitespace and newlines
+    // Remove extra whitespace and newlines
     $aiOutput = trim($aiOutput);
-    
+
     return [
-        'title' => $title,
         'content' => $aiOutput,
         'meta_description' => $metaDescription,
-        'title_tag' => $titleTag
+        'title' => $title
     ];
 }
 
+
+
 // -------------------- ARTICLE GENERATION --------------------
 function generateArticle($db, $user_id, $topic, $keywords, $instructions, $settings = []) {
-    global $action;
-    
     // Calculate total credits needed
     $creditsNeeded = ARTICLE_CREDITS;
-    $includeImages = $settings['images'] ?? false;
+    $includeImages = $settings['includeImages'] ?? false;
     
     if ($includeImages) {
         $creditsNeeded += IMAGE_CREDITS;
@@ -263,7 +257,6 @@ function generateArticle($db, $user_id, $topic, $keywords, $instructions, $setti
         return ['error' => $creditCheck['error']];
     }
     
-    $title = $settings['title'] ?? $topic;
     $wordCount = $settings['word_count'] ?? 500;
     $tone = $settings['tone'] ?? 'professional';
     $language = $settings['language'] ?? 'English';
@@ -290,29 +283,31 @@ function generateArticle($db, $user_id, $topic, $keywords, $instructions, $setti
         // Continue even if image generation fails
     }
     
+    // Process the AI output to extract title and metadata
+    $processedOutput = processAiOutput($response);
+    
+    $title = !empty($processedOutput['title']) ? $processedOutput['title'] : $topic;
+    $content = $processedOutput['content'];
+    $metaDescription = $processedOutput['meta_description'] ?? '';
+    
+    // Calculate actual word count
+    $actualWordCount = str_word_count(strip_tags($content));
+    
     // Deduct credits
-    if (!deductCredits($db, $user_id, $creditsNeeded, $action)) {
+    if (!deductCredits($db, $user_id, $creditsNeeded, 'generateArticle')) {
         return ['error' => 'Failed to deduct credits'];
     }
     
     // Store article in database
-    // Process the AI output to extract title and metadata
-    $processedOutput = processAiOutput($response);
+    $articleId = storeArticle($db, $user_id, $topic, $tone, $wordCount, $title, $content, $metaDescription, $actualWordCount, $creditsNeeded, $imageUrl);
     
-    $title = $processedOutput['title'] ?? $topic;
-    $content = $processedOutput['content'];
-    $metaDescription = $processedOutput['meta_description'];
-    $titleTag = $processedOutput['title_tag'];
-    
-    $articleId = storeArticle($db, $user_id, $topic, $tone, $wordCount, $title, $content, $metaDescription,$titleTag, str_word_count(strip_tags($content)), $creditsNeeded, $imageUrl);
     return [
         'success' => true,
         'title' => $title,
         'content' => $content,
         'meta_description' => $metaDescription,
-        'title_tag' => $titleTag,
         'image' => $imageUrl,
-        'article_id' => $articleId
+        'article_id' => $articleId,
     ];
 }
 
@@ -338,7 +333,7 @@ function generateBulkArticles($db, $user_id, $titles, $settings = [], $keywords 
 }
 
 // -------------------- KEYWORD GENERATION --------------------
-function generateKeywords($db, $user_id, $topic, $count = 10, $action) {
+function generateKeywords($db, $user_id, $topic, $count = 10) {
     // Check credits
     $creditCheck = checkCredits($db, $user_id, KEYWORD_CREDITS);
     if (!$creditCheck['success']) {
@@ -357,7 +352,7 @@ function generateKeywords($db, $user_id, $topic, $count = 10, $action) {
     }
     
     // Deduct credits
-    if (!deductCredits($db, $user_id, KEYWORD_CREDITS, $action)) {
+    if (!deductCredits($db, $user_id, KEYWORD_CREDITS, 'generateKeywords')) {
         return ['error' => 'Failed to deduct credits'];
     }
     
@@ -372,10 +367,54 @@ function generateKeywords($db, $user_id, $topic, $count = 10, $action) {
     ];
 }
 
+// --------------------------- Title Generation ---------------------
+function generateTitles($db, $user_id, $topic, $count = 10) {
+    // Check credits
+    $creditCheck = checkCredits($db, $user_id, TITLE_CREDITS);
+    if (!$creditCheck['success']) {
+        return ['error' => $creditCheck['error']];
+    }
+    
+    $systemMsg = "You are an expert SEO researcher. Provide $count relevant titles for the topic: \"$topic\". Return titles as an array, no explanations, no numbers, just titles.";
+    
+    $response = callOpenAI([
+        ['role' => 'system', 'content' => $systemMsg],
+        ['role' => 'user', 'content' => "Generate $count relevant titles for: $topic"]
+    ], 200);
+    
+    if (isset($response['error'])) {
+        return $response;
+    }
+    
+    // Convert OpenAI response string to array
+    if (is_string($response)) {
+        $titlesArray = json_decode($response, true);
+        if (!is_array($titlesArray)) {
+            return ['error' => 'Failed to parse titles'];
+        }
+    } else {
+        $titlesArray = $response;
+    }
+    
+    // Deduct credits
+    if (!deductCredits($db, $user_id, TITLE_CREDITS, 'generateTitles')) {
+        return ['error' => 'Failed to deduct credits'];
+    }
+    
+    header('Content-Type: application/json');
+    return [
+        'success' => true,
+        'titles' => $titlesArray, // ✅ Proper array
+    ];
+}
+
+
+
+
 // Store generated article in database
-function storeArticle($db, $user_id, $prompt, $tone, $wordLength, $title, $output, $metaDescription, $titleTag, $wordCount, $creditsUsed, $imageUrl = '') {
-    $stmt = $db->prepare("INSERT INTO articles (user_id, prompt, tone, word_length, title, output, meta_description, title_tag, word_count, credits_used, image_url, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-    $stmt->bind_param("ississssiss", $user_id, $prompt, $tone, $wordLength, $title, $output, $wordCount, $creditsUsed, $imageUrl);
+function storeArticle($db, $user_id, $prompt, $tone, $wordLength, $title, $output, $metaDescription, $wordCount, $creditsUsed, $imageUrl = '') {
+    $stmt = $db->prepare("INSERT INTO articles (user_id, prompt, tone, word_length, title, output, meta_description, word_count, credits_used, image_url, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+    $stmt->bind_param("ississsiis", $user_id, $prompt, $tone, $wordLength, $title, $output, $metaDescription, $wordCount, $creditsUsed, $imageUrl);
     $stmt->execute();
     
     return $stmt->insert_id;
@@ -393,10 +432,34 @@ try {
             if (!$topic) {
                 throw new Exception('Topic is required');
             }
+
+            if (!$keywords) {
+                throw new Exception('Keywords are required');
+            }
             
             $result = generateArticle($db, $user_id, $topic, $keywords, $instructions, $settings);
             echo json_encode($result);
             break;
+
+
+        case 'generateTitles':
+            $topic = $input['topic'] ?? '';
+            $keywords = $input['keywords'] ?? [];
+            $instructions = $input['instructions'] ?? '';
+            $settings = $input['settings'] ?? [];
+
+            if (!$topic) {
+                throw new Exception('Topic is required');
+            }
+
+            if (!$keywords) {
+                throw new Exception('Keywords are required');
+            }
+
+            $result = generateTitles($db, $user_id, $topic, $keywords, $instructions, $settings);
+            echo json_encode($result);
+            break;
+            
 
         case 'bulkArticles':
             $titles = $input['titles'] ?? [];
@@ -420,7 +483,7 @@ try {
                 throw new Exception('Topic is required');
             }
             
-            $result = generateKeywords($db, $user_id, $topic, $count, $action);
+            $result = generateKeywords($db, $user_id, $topic, $count);
             echo json_encode($result);
             break;
 

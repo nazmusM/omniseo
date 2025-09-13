@@ -30,7 +30,7 @@ $subscription_plans = [
             'Basic templates'
         ],
         'popular' => false,
-        'current' => ($user['subscription_plan'] ?? 'free') === 'free'
+        'current' => ($user['subscription_plaplan'] ?? 'free') === 'free'
     ],
     [
         'id' => 'starter',
@@ -93,19 +93,11 @@ $subscription_plans = [
         'current' => ($user['subscription_plan'] ?? 'free') === 'enterprise'
     ]
 ];
+
+$title = 'Plans';
+$stylesheet = 'plans.css';
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plans - omniSEO</title>
-    <link rel="stylesheet" href="../assets/css/dashboard.css">
-    <link rel="stylesheet" href="plans.css">
-</head>
-<body>
-    <div class="dashboard-layout">
         <?php include '../includes/sidebar.php'; ?>
         
         <main class="main-content">

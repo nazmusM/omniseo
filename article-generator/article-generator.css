@@ -1,6 +1,6 @@
 .generator-layout {
   display: grid;
-  grid-template-columns: 1fr 350px;
+  grid-template-columns: 1fr 1fr;
   gap: var(--spacing-2xl);
   align-items: start;
 }
@@ -102,27 +102,29 @@
 .checkmark {
   width: 20px;
   height: 20px;
+  flex-shrink: 0;
   border: 2px solid var(--border);
   border-radius: var(--radius-sm);
   position: relative;
   transition: all 0.2s ease;
+  transition: .3s ease;
 }
 
-.checkbox-label input[type="checkbox"]:checked + .checkmark {
+.checkbox-label input[type="checkbox"]:checked+.checkmark {
   background: var(--gradient-primary);
-  border-color: var(--primary);
 }
 
-.checkbox-label input[type="checkbox"]:checked + .checkmark::after {
+.checkbox-label input[type="checkbox"]:checked+.checkmark::after {
   content: "";
   position: absolute;
-  left: 6px;
-  top: 2px;
+  left: 4px;
+  top: 0;
   width: 6px;
   height: 10px;
   border: solid white;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
+  transition: .3s ease;
 }
 
 .form-help {
@@ -309,6 +311,12 @@
   margin-bottom: var(--spacing-sm);
 }
 
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
   .generator-layout {
@@ -375,56 +383,57 @@
 /* article-generator.css */
 
 .preview-section {
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #eee;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eee;
 }
 
-.preview-content, .articles-list {
-    background: #f9f9f9;
-    padding: 1rem;
-    border-radius: 8px;
-    margin-top: 1rem;
+.preview-content,
+.articles-list {
+  background: #f9f9f9;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
 }
 
 .title-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
 }
 
 .title-input {
-    flex: 1;
-    padding: 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    margin-right: 0.5rem;
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-right: 0.5rem;
 }
 
 .article-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem;
-    border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  border-bottom: 1px solid #eee;
 }
 
 .article-item:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 
 .article-actions {
-    display: flex;
-    gap: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
 }
 
 .titles-container {
-    margin: 1rem 0;
-    max-height: 300px;
-    overflow-y: auto;
+  margin: 1rem 0;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 .btn-sm {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
 }

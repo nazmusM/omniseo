@@ -139,6 +139,9 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
+    console.log(titleInputs);
+    return;
+
     // Call autopilot API
     const data = await callAutopilot("bulkArticles", {
       titles: titles,
@@ -188,7 +191,7 @@ async function callAutopilot(action, data, btn) {
   btnLoader(btn, true);
   
   try {
-    const response = await fetch("../api/autopilot.php", {
+    const response = await fetch("../api/autowriter.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -236,6 +239,7 @@ function displayGeneratedTitles(titles) {
     titlesContainer.appendChild(titleDiv);
   });
 
+
   // Add delete functionality
   const deleteButtons = titlesContainer.querySelectorAll(".delete-title");
   deleteButtons.forEach((button) => {
@@ -251,10 +255,6 @@ function getGenerationSettings() {
     language: document.getElementById("output-language").value,
     tone: document.getElementById("writing-tone").value,
     length: document.getElementById("article-length").value,
-    includeIntro: document.getElementById("include-intro").checked,
-    includeConclusion: document.getElementById("include-conclusion").checked,
-    includeHeadings: document.getElementById("include-headings").checked,
-    includeMeta: document.getElementById("include-meta").checked,
     includeImages: document.getElementById("include-images").checked
   };
 }
@@ -267,3 +267,13 @@ function showMessage(message, type) {
       icon: type,
     });
   }
+
+
+  const t = [
+    "Title 1",
+    "Title 2",
+    "Title 3",
+    "Title 4",
+    "Title 5",
+  ];
+  window.onload = displayGeneratedTitles(t)

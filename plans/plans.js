@@ -1,6 +1,8 @@
 const currentPlanData = null
 let selectedPlanData = null
 
+const modal = document.querySelector(".modal");
+
 // Billing toggle functionality
 document.addEventListener("DOMContentLoaded", () => {
   const billingToggle = document.getElementById("billingToggle")
@@ -71,11 +73,11 @@ function changePlan(planId) {
     selectedPlanData.price > 0 ? "$" + selectedPlanData.price + "/month" : "Free"
 
   // Show modal
-  document.getElementById("planChangeModal").style.display = "block"
+  modal.classList.toggle('show');
 }
 
 function closePlanModal() {
-  document.getElementById("planChangeModal").style.display = "none"
+  modal.classList.remove('show');
   selectedPlanData = null
 }
 

@@ -23,7 +23,8 @@ $credit_packages = [
         'credits' => 100,
         'price' => 9.99,
         'popular' => false,
-        'description' => 'Perfect for getting started'
+        'description' => 'Perfect for getting started',
+        'price_per_credit' => 0.0999
     ],
     [
         'id' => 'professional',
@@ -31,7 +32,8 @@ $credit_packages = [
         'credits' => 500,
         'price' => 39.99,
         'popular' => true,
-        'description' => 'Most popular choice'
+        'description' => 'Best value for money',
+        'price_per_credit' => 0.07998
     ],
     [
         'id' => 'business',
@@ -39,7 +41,8 @@ $credit_packages = [
         'credits' => 1000,
         'price' => 69.99,
         'popular' => false,
-        'description' => 'For heavy users'
+        'description' => 'For heavy users',
+        'price_per_credit' => 0.06999
     ],
     [
         'id' => 'enterprise',
@@ -47,27 +50,21 @@ $credit_packages = [
         'credits' => 2500,
         'price' => 149.99,
         'popular' => false,
-        'description' => 'Maximum value'
+        'description' => 'Maximum value',
+        'price_per_credit' => 0.059996
     ]
 ];
-?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Credits - omniSEO</title>
-    <link rel="stylesheet" href="../assets/css/dashboard.css">
-    <link rel="stylesheet" href="credits.css">
-</head>
-<body>
-    <div class="dashboard-layout">
+$title = 'Add Credits';
+$stylesheet = 'credits.css';
+?>
+    
+    </style>
         <?php include '../includes/sidebar.php'; ?>
         
         <main class="main-content">
             <div class="page-header">
-                <h1>Credits</h1>
+                <h1>Buy Credits</h1>
                 <p>Purchase credits to generate more amazing content</p>
             </div>
 
@@ -85,35 +82,17 @@ $credit_packages = [
                         <p>Each article generation costs 10 credits</p>
                     </div>
                 </div>
-
-                <div class="usage-stats">
-                    <h4>Usage Statistics</h4>
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <span class="stat-label">This Month</span>
-                            <span class="stat-value">47 Articles</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Credits Used</span>
-                            <span class="stat-value">470 Credits</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Average Daily</span>
-                            <span class="stat-value">15.6 Credits</span>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <div class="credit-packages">
-                <h2>Buy Credits</h2>
-                <p>Choose the perfect credit package for your needs</p>
+                <h2>Credit Packages</h2>
+                <p>Choose the package that fits your content needs</p>
                 
                 <div class="packages-grid">
                     <?php foreach ($credit_packages as $package): ?>
                     <div class="package-card <?php echo $package['popular'] ? 'popular' : ''; ?>">
                         <?php if ($package['popular']): ?>
-                        <div class="popular-badge">Most Popular</div>
+                        <div class="popular-badge">Best Value</div>
                         <?php endif; ?>
                         
                         <div class="package-header">
@@ -124,6 +103,7 @@ $credit_packages = [
                         <div class="package-price">
                             <span class="price">$<?php echo $package['price']; ?></span>
                             <span class="credits"><?php echo $package['credits']; ?> Credits</span>
+                            <span class="price-per-credit">$<?php echo number_format($package['price_per_credit'], 4); ?> per credit</span>
                         </div>
                         
                         <div class="package-features">
@@ -143,13 +123,7 @@ $credit_packages = [
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <polyline points="20,6 9,17 4,12"/>
                                 </svg>
-                                WordPress integration
-                            </div>
-                            <div class="feature">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="20,6 9,17 4,12"/>
-                                </svg>
-                                Priority support
+                                SEO optimization included
                             </div>
                         </div>
                         
@@ -162,7 +136,7 @@ $credit_packages = [
             </div>
 
             <div class="payment-info">
-                <h3>Payment Information</h3>
+                <h3>Secure Payment Methods</h3>
                 <div class="payment-methods">
                     <div class="payment-method">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -174,8 +148,8 @@ $credit_packages = [
                     <div class="payment-method">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/>
-                            <path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/>
-                            <path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"/>
+                            <path d="M4 6v12c0 1.1.9-2 2-2h14v-4"/>
+                            <path d="M18 12a2 2 0 0 0-2 2c0 1.1.9-2 2-2h4v-4h-4z"/>
                         </svg>
                         <span>PayPal</span>
                     </div>

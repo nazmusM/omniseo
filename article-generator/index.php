@@ -20,7 +20,6 @@ $user_credits = $stmt->get_result()->fetch_assoc()['credits'];
 $title = 'Article Generator';
 $stylesheet = 'article-generator.css';
 ?>
-    <link rel="stylesheet" href="article-generator.css">
 
         <?php include '../includes/sidebar.php'; ?>
         
@@ -143,7 +142,7 @@ $stylesheet = 'article-generator.css';
                         <div class="card-header">
                             <h3 class="card-title">Generation Settings</h3>
                         </div>
-                        <div class="card-content">
+                        <div class="card-content grid">
                             <div class="form-group">
                                 <label class="form-label">Output Language</label>
                                 <select class="form-input form-select" id="output-language">
@@ -170,36 +169,10 @@ $stylesheet = 'article-generator.css';
                             <div class="form-group">
                                 <label class="form-label">Article Length</label>
                                 <select class="form-input form-select" id="article-length">
-                                    <option value="short">Short (1000-1500 words)</option>
-                                    <option value="medium">Medium (1500-2000 words)</option>
-                                    <option value="long">Long (2000-3000 words)</option>
+                                    <option value="1000-1500 words">Short (1000-1500 words)</option>
+                                    <option value="1500-2000 words">Medium (1500-2000 words)</option>
+                                    <option value="2000+ words">Long (2000-3000 words)</option>
                                 </select>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">Include</label>
-                                <div class="checkbox-group">
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" id="include-intro" checked>
-                                        <span class="checkmark"></span>
-                                        Introduction
-                                    </label>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" id="include-conclusion" checked>
-                                        <span class="checkmark"></span>
-                                        Conclusion
-                                    </label>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" id="include-headings" checked>
-                                        <span class="checkmark"></span>
-                                        H2/H3 Headings
-                                    </label>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" id="include-meta">
-                                        <span class="checkmark"></span>
-                                        Meta Description
-                                    </label>
-                                </div>
                             </div>
                             
                             <div class="form-group">
