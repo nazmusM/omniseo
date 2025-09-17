@@ -18,7 +18,7 @@ $user = $stmt->get_result()->fetch_assoc();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $title . '-' .  SITE_NAME ?></title>
+    <title><?php echo $title . ' - ' .  SITE_NAME ?></title>
     <link rel="stylesheet" href="../assets/css/dashboard.css?v=<?= time(); ?>">
     <link rel="stylesheet" href="<?= $stylesheet . '?v=' . time(); ?>">
     <script src="../assets/sweetalert/sweetalert.min.js"></script>
@@ -42,7 +42,7 @@ $user = $stmt->get_result()->fetch_assoc();
             </div>
             <div class="navbar-header">
                 <div class="logo">
-                    <h2>omniSEO</h2>
+                    <h2><?= SITE_NAME?></h2>
                 </div>
             </div>
             <div class="nav-right-menu">
@@ -51,8 +51,23 @@ $user = $stmt->get_result()->fetch_assoc();
                     <span class="credits-label">Credits</span>
                 </div>
                 <div class="plan-upgrade">
-                    <a href="../plans" class="credits-badge btn-primary">Upgrade Plan</a>
-                    <a href="../credits" class="credits-badge btn-secondary">Buy Credits</a>
+                    <a href="../plans" class="credits-badge btn-primary" title="Upgrade Plan">
+                        <span class="item-name">Upgrade Plan</span> 
+               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <rect x="3" y="8" width="18" height="12" rx="2"></rect>
+  <path d="M12 16h.01"></path>
+  <path d="M17 8V6a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v2"></path>
+  <path d="M7 16v-2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"></path>
+</svg>
+                </a>
+                    <a href="../credits" class="credits-badge btn-secondary" title="Add Credits">
+                        <span class="item-name">Buy Credits</span>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="12" r="10"></circle>
+  <line x1="12" y1="8" x2="12" y2="16"></line>
+  <line x1="8" y1="12" x2="16" y2="12"></line>
+</svg>
+                        </a>
                 </div>
             </div>
         </div>
@@ -95,8 +110,8 @@ $user = $stmt->get_result()->fetch_assoc();
                             Dashboard
                         </a>
                     </li>
-                    <li class="<?php echo basename($_SERVER['REQUEST_URI']) == 'article-generator' ? 'active' : ''; ?>">
-                        <a href="../article-generator">
+                    <li class="<?php echo basename($_SERVER['REQUEST_URI']) == 'projects' ? 'active' : ''; ?>">
+                        <a href="../projects">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                                 <polyline points="14,2 14,8 20,8" />
@@ -104,7 +119,7 @@ $user = $stmt->get_result()->fetch_assoc();
                                 <line x1="16" y1="17" x2="8" y2="17" />
                                 <polyline points="10,9 9,9 8,9" />
                             </svg>
-                            Article Generator
+                            Create Projects
                         </a>
                     </li>
                     <li class="<?php echo basename($_SERVER['REQUEST_URI']) == 'history' ? 'active' : ''; ?>">

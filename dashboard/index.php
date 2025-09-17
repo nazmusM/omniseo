@@ -25,7 +25,7 @@ $stmt->execute();
 $monthly_articles = $stmt->get_result()->fetch_assoc()['monthly_articles'];
 
 // Get recent articles
-$stmt = $db->prepare("SELECT title, created_at FROM articles WHERE user_id = ? ORDER BY created_at DESC LIMIT 5");
+$stmt = $db->prepare("SELECT id, title, created_at FROM articles WHERE user_id = ? ORDER BY created_at DESC LIMIT 5");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $recent_articles = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -68,7 +68,7 @@ $title = 'Dashboard';
                     </div>
                     <div class="card-content">
                         <div class="quick-actions">
-                            <a href="../article-generator" class="btn btn-primary">
+                            <a href="../projects" class="btn btn-primary">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                                     <polyline points="14,2 14,8 20,8"/>
@@ -94,13 +94,15 @@ $title = 'Dashboard';
                     </div>
                     <div class="card-content">
                         <?php if (empty($recent_articles)): ?>
-                            <p class="empty-state">No articles generated yet. <a href="/article-generator">Create your first article</a>!</p>
+                            <p class="empty-state">No articles generated yet. <a href="../projects">Create your first article</a>!</p>
                         <?php else: ?>
                             <div class="recent-articles">
                                 <?php foreach ($recent_articles as $article): ?>
                                     <div class="article-item">
-                                        <h4><?php echo htmlspecialchars($article['title']); ?></h4>
+                                        <a href="../article?id=<?= $article['id']?>">
+                                            <h4><?php echo htmlspecialchars($article['title']); ?></h4>
                                         <p><?php echo date('M j, Y', strtotime($article['created_at'])); ?></p>
+                                    </a>
                                     </div>
                                 <?php endforeach; ?>
                             </div>
@@ -144,6 +146,11 @@ $title = 'Dashboard';
 .article-item:hover {
     border-color: var(--primary);
     background: var(--surface-hover);
+}
+
+.article-item a{
+    text-decoration: none;
+    color: var(--text-primary);
 }
 
 .article-item h4 {

@@ -86,6 +86,9 @@ if (isset($_SESSION['user_id'])) {
 
                 <input type="hidden" name="csrf_token" value="<?php echo csrf_token(); ?>">
 
+                <div class="auth-footer">
+                    <p>By registering in our platform, you agree to our <strong>Privacy Policy</strong> and <strong>Terms of Services</strong> described in <a href="../legal">this page</a>.</p>
+                </div>
                 <button type="submit" class="btn btn-primary sign-up full-width">Create Account</button>
             </form>
 

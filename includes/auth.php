@@ -25,7 +25,7 @@ class Auth
         return isset($_SESSION['user_id']);
     }
 
-    public function requireLogin($redirectUrl = 'login.php')
+    public function requireLogin($redirectUrl = '../login.php')
     {
         if (!$this->isLoggedIn()) {
             if ($this->isAjaxRequest()) {

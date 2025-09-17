@@ -56,6 +56,8 @@ if (isset($_SESSION['user_id'])) {
                     </div>
                 </div>
 
+                    <a href="../reset-password" style="display: inline-block; text-decoration: none; color: var(--grey-500); margin-bottom: 20px;">Reset Password</a>
+
                 <input type="hidden" name="csrf_token" value="<?php echo csrf_token(); ?>">
 
                 <button type="submit" class="btn btn-primary login-btn full-width">Sign In</button>
@@ -64,8 +66,8 @@ if (isset($_SESSION['user_id'])) {
             <div class="auth-footer">
                 <p>Don't have an account? <a href="../signup">Sign up here</a></p>
                 <p>Test account:</p>
-                <strong>email: nazmuss@example.com</strong><br>
-                <strong>pass: password123</strong>
+                <strong>email: nazmussakibsyam2@gmail.com</strong><br>
+                <strong>pass: nazmuss111*M</strong>
             </div>
         </div>
     </div>

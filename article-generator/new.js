@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
       keywords: keywords,
       instructions: instructions,
       settings: getGenerationSettings()
-    }, generateBtn);
+    }, generateBtn, "single");
 
     if (data.success) {
       // Show preview
@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function () {
       topic: topic,
       keywords: keywords,
       count: count
-    }, generateBtn);
+    }, generateBtn, "titles");
 
     if (data.success) {
       displayGeneratedTitles(data.titles);
@@ -130,52 +130,61 @@ document.addEventListener("DOMContentLoaded", function () {
   // Bulk articles generation
   const generateBulkBtn = document.getElementById("generate-bulk-articles-btn");
   generateBulkBtn.addEventListener("click", async function () {
-    // Get all titles
-    const titleInputs = document.querySelectorAll(".title-input");
-    const titles = Array.from(titleInputs).map((input) => input.value);
-    
-    if (titles.length === 0) {
-      showMessage("Please generate titles first", "error");
-      return;
-    }
+  // Get all titles
+  const titleInputs = document.querySelectorAll(".title-input");
+  const titles = Array.from(titleInputs).map((input) => input.value);
 
-    console.log(titleInputs);
+  if (titles.length === 0) {
+    showMessage("Please generate titles first", "error");
     return;
+  }
 
-    // Call autopilot API
-    const data = await callAutopilot("bulkArticles", {
-      titles: titles,
+  const articlesList = document.getElementById("bulk-articles-list");
+  articlesList.innerHTML = "";
+  const previewSection = document.getElementById("bulk-preview-section");
+  previewSection.style.display = "block";
+
+  let successCount = 0;
+
+  for (let i = 0; i < titles.length; i++) {
+    const title = titles[i];
+
+    try {
+       // Call autopilot API
+    const data = await callAutopilot("generateArticle", {
+      topic: title,
       settings: getGenerationSettings()
-    }, this);
+    }, this, "bulk");
+      if (data.success) {
+        title.style.textDecoration = "line-through"; // Mark title as processed
+        successCount++;
 
-    if (data.success) {
-      // Display bulk articles preview
-      document.getElementById("step-2").style.display = "none";
-      const previewSection = document.getElementById("bulk-preview-section");
-      const articlesList = document.getElementById("bulk-articles-list");
-
-      articlesList.innerHTML = "";
-
-      // Add articles to preview
-      data.articles.forEach((article, index) => {
+        // Add to preview
         const articleDiv = document.createElement("div");
         articleDiv.className = "article-item";
         articleDiv.innerHTML = `
-          <h4>${article.title}</h4>
+          <h4>${data.title}</h4>
           <div class="article-actions">
-            <a href="../article/?id=${article.id}&edit=true" class="btn btn-secondary btn-sm">Edit</a>
-            <a href="../article/?id=${article.id}" class="btn btn-primary btn-sm">View</a>
+            <a href="../article/?id=${data.article_id}&edit=true" class="btn btn-secondary btn-sm">Edit</a>
+            <a href="../article/?id=${data.article_id}" class="btn btn-primary btn-sm">View</a>
           </div>
         `;
         articlesList.appendChild(articleDiv);
-      });
+      } else {
+        console.warn(`Failed to generate article for "${title}": ${data.message}`);
+      }
 
-      previewSection.style.display = "block";
-      showMessage(`${data.articles.length} articles generated successfully!`, "success");
-    } else {
-      showMessage(data.message || "Failed to generate articles", "error");
+      // Optional: show progress to user
+      showMessage(`Generated ${i + 1}/${titles.length} articles...`, "info");
+    } catch (err) {
+      console.error("Error generating article:", err);
     }
-  });
+  }
+
+  showMessage(`${successCount}/${titles.length} articles generated successfully!`, "success");
+});
+
+
 
   // Update cost when image generation is toggled
   const includeImages = document.getElementById("include-images");
@@ -187,7 +196,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // Unified function to call autopilot API
-async function callAutopilot(action, data, btn) {
+async function callAutopilot(action, data, btn, type = "single") {
   btnLoader(btn, true);
   
   try {
@@ -197,6 +206,7 @@ async function callAutopilot(action, data, btn) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        type: type,
         action: action,
         ...data
       }),
@@ -215,7 +225,7 @@ async function callAutopilot(action, data, btn) {
 
 // Generate keywords function
 async function generateKeywords(topic, keywordsInput, btn) {
-  const data = await callAutopilot("generateKeywords", { topic: topic }, btn);
+  const data = await callAutopilot("generateKeywords", { topic: topic }, btn, "keywords");
   if (data.success && data.keywords) {
     
     keywordsInput.value = data.keywords;
@@ -255,7 +265,16 @@ function getGenerationSettings() {
     language: document.getElementById("output-language").value,
     tone: document.getElementById("writing-tone").value,
     length: document.getElementById("article-length").value,
-    includeImages: document.getElementById("include-images").checked
+    projectId : getProjectId(),
+    pointOfView: document.getElementById("point-of-view").value,
+    boldItalic: document.getElementById("bold-italic").value,
+    faq: document.getElementById("faq").value,
+    keyTakeaways: document.getElementById("key-takeaways").value,
+    externalLinks: document.getElementById("external-links").value,
+    includeImages: document.getElementById("include-images").checked,
+    publishToWordpress: document.getElementById("publish-to-wordpress").value,
+    publishStatus: document.getElementById("publish-status").value,
+
   };
 }
 
@@ -268,12 +287,9 @@ function showMessage(message, type) {
     });
   }
 
-
-  const t = [
-    "Title 1",
-    "Title 2",
-    "Title 3",
-    "Title 4",
-    "Title 5",
-  ];
-  window.onload = displayGeneratedTitles(t)
+  // Simple approach for getting a specific parameter
+function getProjectId() {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    return urlParams.get('project_id');
+}

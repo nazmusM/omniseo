@@ -29,8 +29,6 @@
 
 /* Hero Section */
 .hero {
-  padding: calc(80px + var(--spacing-4xl)) 0 var(--spacing-4xl);
-  background: linear-gradient(135deg, #f8fafc 0%, #ecfeff 100%);
   position: relative;
   overflow: hidden;
 }
@@ -787,17 +785,6 @@
     }
 }
 
-@media (max-width: 768px) {
-    .step {
-        width: 100% !important;
-        margin: 1rem 0;
-    }
-    
-    .process-steps {
-        flex-direction: column;
-    }
-}
-
 /* Testimonials Section */
 .testimonials {
     padding: 5rem 0;
@@ -1258,8 +1245,17 @@
     --font-size-4xl: 2rem;
   }
 
+  .step {
+        width: 100% !important;
+        margin: 1rem 0;
+    }
+    
+    .process-steps {
+        flex-direction: column;
+    }
+
   .hero {
-    padding: calc(80px + var(--spacing-2xl)) 0 var(--spacing-2xl);
+    padding: var(--spacing-2xl);
   }
 
   .hero-cta {
@@ -1309,7 +1305,7 @@
 
 @media (max-width: 480px) {
   .container {
-    padding: 0 var(--spacing-md);
+    padding: 0 var(--spacing-xs) !important;
   }
 
   .hero-badge {

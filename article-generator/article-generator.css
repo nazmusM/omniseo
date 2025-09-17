@@ -1,8 +1,18 @@
+.header-flex{
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.header-btn{
+  flex-shrink: 0;
+}
 .generator-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--spacing-2xl);
   align-items: start;
+  margin-bottom: var(--spacing-lg);
 }
 
 .generator-panel {
@@ -313,7 +323,7 @@
 
 .grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 20px;
 }
 
@@ -345,6 +355,10 @@
 
   .checkbox-group {
     gap: var(--spacing-sm);
+  }
+
+  .grid{
+    grid-template-columns: 1fr;
   }
 }
 
@@ -436,4 +450,15 @@
 .btn-sm {
   padding: 0.25rem 0.5rem;
   font-size: 0.875rem;
+}
+
+.article-section{
+  display: grid;
+}
+
+.article-section a{
+  display: inline-block;
+  text-decoration: none;
+  margin-top: 20px;
+  color: var(--primary);
 }

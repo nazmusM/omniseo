@@ -1,53 +1,112 @@
 <?php
-$api = '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';
+$apiKey = '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';
 
-function generateImage($prompt, $api, $size = '1024x1024') {
+
+function generateImage($prompt, $apiKey) {
+    $savePath = 'opt/lampp/htdocs/omniseo/assets/images/';
+    // Validate API key
+    if (!$apiKey) {
+        return ['error' => 'OpenRouter API key not set'];
+    }
+    
+    // Ensure the save path exists and is writable
+    if (!is_dir($savePath)) {
+        if (!mkdir($savePath, 0755, true)) {
+            return ['error' => "Could not create directory: $savePath"];
+        }
+    }
+    
+    if (!is_writable($savePath)) {
+        return ['error' => "Directory is not writable: $savePath"];
+    }
+
+    // Prepare the API request
     $payload = [
         "model" => "google/gemini-2.5-flash-image-preview",
-  "messages" => [
-      "role" => "user",
-      "content" => [
-          "type" => "text",
-          "text" => "What is in this image?"
-          ],
-      "type" => "image_url"
-          ["image_url" => [
-            "url" => "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
-          
-          ]
-  ]
+        "messages" => [
+            [
+                "role" => "user",
+                "content" => $prompt
+            ]
+        ],
+        "modalities" => ["image", "text"],
+        "max_tokens" => 500
     ];
 
-    $ch = curl_init();
+    $ch = curl_init("https://openrouter.ai/api/v1/chat/completions");
     curl_setopt_array($ch, [
-        CURLOPT_URL => 'https://openrouter.ai/api/v1/chat/completions',
+        CURLOPT_HTTPHEADER => [
+            "Content-Type: application/json",
+            "Authorization: Bearer " . $apiKey,
+            "HTTP-Referer: " . (isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : 'https://omniseo.com'),
+            "X-Title: omniSEO"
+        ],
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_POST => true,
         CURLOPT_POSTFIELDS => json_encode($payload),
-        CURLOPT_HTTPHEADER => [
-            'Content-Type: application/json',
-            'Authorization: Bearer ' . $api,
-            'HTTP-Referer: ' . ($_SERVER['HTTP_ORIGIN'] ?? 'https://omniseo.com'),
-            'X-Title: omniSEO Image Generator'
-        ],
-        CURLOPT_TIMEOUT => 60
+        CURLOPT_TIMEOUT => 120 // Increased timeout for image generation
     ]);
-    
+
     $response = curl_exec($ch);
 
     if (curl_errno($ch)) {
-        $error = curl_error($ch);
+        $err = curl_error($ch);
         curl_close($ch);
-        return ["error" => "CURL error: " . $error];
+        return ['error' => "CURL error: $err"];
     }
-    
     curl_close($ch);
 
-    // 🔎 Return raw API response so we can inspect
-    return ["raw" => $response];
+    $data = json_decode($response, true);
+    if (isset($data['error'])) {
+        return ['error' => 'API error: ' . $data['error']['message']];
+    }
+
+    // Process the image response
+    if (isset($data['choices'][0]['message']['images']) && is_array($data['choices'][0]['message']['images'])) {
+        $img = $data['choices'][0]['message']['images'][0];
+        $imageData = null;
+        $extension = 'png';
+        
+        // Handle different response formats
+        if (isset($img['image_url']['url']) && !empty($img['image_url']['url'])) {
+            $imageUrl = $img['image_url']['url'];
+            $imageData = file_get_contents($imageUrl);
+        } elseif (isset($img['image_url']) && is_string($img['image_url']) && !empty($img['image_url'])) {
+            $imageUrl = $img['image_url'];
+            $imageData = file_get_contents($imageUrl);
+        } elseif (isset($img['url']) && !empty($img['url'])) {
+            $imageUrl = $img['url'];
+            $imageData = file_get_contents($imageUrl);
+        } elseif (isset($img['b64_json']) && !empty($img['b64_json'])) {
+            $imageData = base64_decode($img['b64_json']);
+        }
+        
+        // Save the image if we have data
+        if ($imageData) {
+            // Generate a unique filename
+            $filename = 'generated_image_' . time() . '_' . uniqid() . '.' . $extension;
+            $fullPath = $savePath . $filename;
+            
+            // Save the image file
+            if (file_put_contents($fullPath, $imageData)) {
+                return $fullPath; // Return the full path to the saved image
+            } else {
+                return ['error' => 'Failed to save image to file system'];
+            }
+        }
+    }
+    
+    return ['error' => 'No image generated or unsupported response format'];
 }
 
-header('Content-Type: application/json');
-echo json_encode([
-    "image" => generateImage("A futuristic cyberpunk city at night with neon lights", $api)
-]);
+// Example usage:
+ $imagePath = generateImage("Generate a beautiful landscape image", $apiKey);
+
+if (is_array($imagePath) && isset($imagePath['error'])) {
+    // Handle error
+    echo "Error: " . $imagePath['error'];
+} else {
+    // Store $imagePath in database
+    echo "Image saved to: " . $imagePath;
+}
+?>

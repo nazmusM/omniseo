@@ -1,3 +1,4 @@
+<?php $title = 'AI-Powered SEO Content Generator';?>
 <?php include('includes/header.php');?>
 
 <main class="main">
@@ -203,7 +204,7 @@
                     <h3>Perfect Brand Voice</h3>
                     <p>Customize tone, style, and messaging to match your brand perfectly. From professional to conversational, we've got you covered.</p>
                     <div class="benefit-stats">
-                        <span class="stat-highlight">12+ tone options</span>
+                        <span class="stat-highlight">10+ tone options</span>
                     </div>
                 </div>
             </div>

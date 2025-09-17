@@ -1,10 +1,15 @@
 <?php
-require_once 'includes/config.php';
-require_once 'includes/auth.php';
+ini_set("display_errors", 1);
+
+$basePath = ($_SERVER['REQUEST_URI'] == '/' ? '' : '../');
+// $basePath = '';
+
+require_once $basePath . "includes/config.php";
+require_once $basePath . "includes/auth.php";
 
 // Redirect if already logged in
 if ($auth->isLoggedIn()) {
-    header('Location: dashboard');
+    header('Location:' . $basePath . 'dashboard');
     exit;
 }
 ?>
@@ -14,8 +19,9 @@ if ($auth->isLoggedIn()) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo SITE_NAME; ?> - AI-Powered SEO Content Generator</title>
-    <link rel="stylesheet" href="assets/css/homepage.css?v=<?= time(); ?>">
+    <title><?php echo SITE_NAME; ?> - <?= $title ?></title>
+    <link rel="stylesheet" href="<?= $basePath ?>assets/css/homepage.css?v=<?= time(); ?>">
+    <link rel="stylesheet" href="<?= $stylesheet ?>.css?v=<?= time(); ?>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -140,7 +146,6 @@ if ($auth->isLoggedIn()) {
         }
 
         p {
-            color: var(--gray-600);
             line-height: 1.7;
         }
 
@@ -317,8 +322,8 @@ if ($auth->isLoggedIn()) {
         .nav-links a:hover::after {
             width: 100%;
         }
-        
-        .toggle-btn{
+
+        .toggle-btn {
             display: none;
             position: relative;
             width: 20px;
@@ -345,46 +350,46 @@ if ($auth->isLoggedIn()) {
             transition: all var(--transition-fast);
         }
 
-        .nav-toggle span:nth-child(1){
+        .nav-toggle span:nth-child(1) {
             top: 0;
         }
 
-.nav-toggle span:nth-child(2){
+        .nav-toggle span:nth-child(2) {
             top: 50%;
             transform: translateY(-50%);
         }
-        
-        .nav-toggle span:nth-child(3){
+
+        .nav-toggle span:nth-child(3) {
             top: 100%;
             transform: translateY(-100%);
         }
-        
 
-        .toggle-close{
+
+        .toggle-close {
             opacity: 0;
         }
 
-        .toggle-close span{
+        .toggle-close span {
             position: absolute;
             top: 50%;
             left: 0;
             transform: translateY(-50%);
         }
 
-        .toggle-close span:nth-child(1){
-transform: rotate(45deg);
+        .toggle-close span:nth-child(1) {
+            transform: rotate(45deg);
         }
 
-        .toggle-close span:nth-child(2){
-transform: rotate(-45deg);
+        .toggle-close span:nth-child(2) {
+            transform: rotate(-45deg);
         }
 
-        .toggle-btn.active .toggle-close{
+        .toggle-btn.active .toggle-close {
             transform: rotate(360deg);
             opacity: 1;
         }
 
-        .toggle-btn.active .nav-toggle{
+        .toggle-btn.active .nav-toggle {
             transform: rotate(360deg);
             opacity: 0;
         }
@@ -400,10 +405,14 @@ transform: rotate(-45deg);
             display: none;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 922px) {
             :root {
                 --font-size-5xl: 2.5rem;
                 --font-size-4xl: 2rem;
+            }
+
+            main {
+                padding: 0 !important;
             }
 
             .btn-group.desktop {
@@ -414,7 +423,7 @@ transform: rotate(-45deg);
                 display: flex;
             }
 
-            .nav-menu{
+            .nav-menu {
                 position: absolute;
                 top: 100%;
                 left: 0;
@@ -435,27 +444,35 @@ transform: rotate(-45deg);
                 display: flex;
             }
         }
+
+        .main {
+            margin-top: 60px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 20px;
+        }
     </style>
 </head>
 
 <body>
     <!-- Header -->
     <header class="header" id="header">
-        <nav class="nav container">
+        <nav class="nav">
             <a href="index.php" class="logo">
                 <span class="logo-icon">🚀</span>
                 <?php echo SITE_NAME; ?>
             </a>
             <div class="toggle-btn">
-            <div class="nav-toggle" id="navToggle">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <div class="toggle-close" id="toggleClose">
-                <span></span>
-                <span></span>
-            </div>
+                <div class="nav-toggle" id="navToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="toggle-close" id="toggleClose">
+                    <span></span>
+                    <span></span>
+                </div>
             </div>
             <div class="nav-menu">
                 <ul class="nav-links" id="navLinks">
@@ -465,14 +482,14 @@ transform: rotate(-45deg);
                     <li><a href="#testimonials">Reviews</a></li>
                     <li><a href="#pricing">Pricing</a></li>
                     <ul class="btn-group mobile">
-                        <li><a href="login" class="btn btn-outline">Sign In</a></li>
-                        <li><a href="signup" class="btn btn-primary">Start Free</a></li>
+                        <li><a href="<?= $basePath ?>login" class="btn btn-outline">Sign In</a></li>
+                        <li><a href="<?= $basePath ?>signup" class="btn btn-primary">Start Free</a></li>
                     </ul>
                 </ul>
             </div>
             <ul class="btn-group desktop">
-                <li><a href="login" class="btn btn-outline">Sign In</a></li>
-                <li><a href="signup" class="btn btn-primary">Start Free</a></li>
+                <li><a href="<?= $basePath ?>login" class="btn btn-outline">Sign In</a></li>
+                <li><a href="<?= $basePath ?>signup" class="btn btn-primary">Start Free</a></li>
             </ul>
         </nav>
     </header>

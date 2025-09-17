@@ -24,15 +24,8 @@ if (!$article) {
 }
 
 // Extract title
-$title = $article['prompt'];
-$content_lines = explode("\n", $article['output']);
-foreach ($content_lines as $line) {
-    $line = trim($line);
-    if (!empty($line) && (strpos($line, '#') === 0 || strlen($line) > 10)) {
-        $title = strip_tags(str_replace('#', '', $line));
-        break;
-    }
-}
+$title = $article['title'];
+
 
 // Edit mode
 $is_editing = isset($_GET['edit']) && $_GET['edit'] === 'true';
@@ -46,7 +39,7 @@ $stylesheet = 'article.css';
 
 <main class="main-content">
     <div class="back-button">
-        <a href="history.php" class="btn btn-secondary">
+        <a href="../history" class="btn btn-secondary">
             <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
             </svg>
@@ -77,12 +70,6 @@ $stylesheet = 'article.css';
                     </svg>
                     <?php echo ucwords(str_replace('_', ' ', $article['content_type'])); ?>
                 </div>
-                <div class="meta-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6h13M9 12h9"/>
-                    </svg>
-                    <?php echo ucfirst($article['tone']); ?> tone
-                </div>
             </div>
         </div>
 
@@ -101,21 +88,7 @@ $stylesheet = 'article.css';
             <?php else: ?>
                 <div id="articleContent">
                     <?php
-                    $content = $article['output'];
-                    $content = preg_replace('/^### (.*$)/m', '<h3>$1</h3>', $content);
-                    $content = preg_replace('/^## (.*$)/m', '<h2>$1</h2>', $content);
-                    $content = preg_replace('/^# (.*$)/m', '<h1>$1</h1>', $content);
-                    $content = preg_replace('/\n\n+/', '</p><p>', $content);
-                    $content = '<p>' . $content . '</p>';
-                    $content = preg_replace('/^\* (.*$)/m', '<li>$1</li>', $content);
-                    $content = preg_replace('/(<li>.*<\/li>)/s', '<ul>$1</ul>', $content);
-                    $content = preg_replace('/^\d+\. (.*$)/m', '<li>$1</li>', $content);
-                    $content = preg_replace('/(<li>.*<\/li>)+/s', '<ol>$0</ol>', $content);
-                    $content = preg_replace('/<p><\/p>/', '', $content);
-                    $content = preg_replace('/<p>(<h[1-6]>.*<\/h[1-6]>)<\/p>/', '$1', $content);
-                    $content = preg_replace('/<p>(<ul>.*<\/ul>)<\/p>/s', '$1', $content);
-                    $content = preg_replace('/<p>(<ol>.*<\/ol>)<\/p>/s', '$1', $content);
-                    echo $content;
+                    echo $article['output'];
                     ?>
                 </div>
             <?php endif; ?>
@@ -124,16 +97,28 @@ $stylesheet = 'article.css';
         <?php if (!$is_editing): ?>
             <div class="output-actions">
                 <button type="button" class="btn btn-secondary copy-btn" data-content="<?php echo htmlspecialchars($article['output']); ?>">
-                    📋 Copy Text
+                    <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <path d="M5 15C4.06812 15 3.60218 15 3.23463 14.8478C2.74458 14.6448 2.35523 14.2554 2.15224 13.7654C2 13.3978 2 12.9319 2 12V5.2C2 4.0799 2 3.51984 2.21799 3.09202C2.40973 2.71569 2.71569 2.40973 3.09202 2.21799C3.51984 2 4.0799 2 5.2 2H12C12.9319 2 13.3978 2 13.7654 2.15224C14.2554 2.35523 14.6448 2.74458 14.8478 3.23463C15 3.60218 15 4.06812 15 5M12.2 22H18.8C19.9201 22 20.4802 22 20.908 21.782C21.2843 21.5903 21.5903 21.2843 21.782 20.908C22 20.4802 22 19.9201 22 18.8V12.2C22 11.0799 22 10.5198 21.782 10.092C21.5903 9.71569 21.2843 9.40973 20.908 9.21799C20.4802 9 19.9201 9 18.8 9H12.2C11.0799 9 10.5198 9 10.092 9.21799C9.71569 9.40973 9.40973 9.71569 9.21799 10.092C9 10.5198 9 11.0799 9 12.2V18.8C9 19.9201 9 20.4802 9.21799 20.908C9.40973 21.2843 9.71569 21.5903 10.092 21.782C10.5198 22 11.0799 22 12.2 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+ </svg>
+  Copy Text
                 </button>
                 <button type="button" class="btn btn-secondary" onclick="downloadText()">
-                    💾 Download
+                    <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <path d="M3 21H21M12 3V17M12 17L19 10M12 17L5 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+ </svg>
+  Download
                 </button>
                 <button type="button" class="btn btn-secondary" onclick="enableEditMode()">
-                    ✏️ Edit Content
+                    <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <path d="M18 10L14 6M2.49997 21.5L5.88434 21.124C6.29783 21.078 6.50457 21.055 6.69782 20.9925C6.86926 20.937 7.03242 20.8586 7.18286 20.7594C7.35242 20.6475 7.49951 20.5005 7.7937 20.2063L21 7C22.1046 5.89543 22.1046 4.10457 21 3C19.8954 1.89543 18.1046 1.89543 17 3L3.7937 16.2063C3.49952 16.5005 3.35242 16.6475 3.24061 16.8171C3.1414 16.9676 3.06298 17.1307 3.00748 17.3022C2.94493 17.4954 2.92195 17.7021 2.87601 18.1156L2.49997 21.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+ </svg>
+  Edit Content
                 </button>
                 <button type="button" class="btn btn-primary" onclick="alert('WordPress publishing coming soon!')">
-                    📝 Publish to WordPress
+                    <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <path d="M21 11.5V8.8C21 7.11984 21 6.27976 20.673 5.63803C20.3854 5.07354 19.9265 4.6146 19.362 4.32698C18.7202 4 17.8802 4 16.2 4H7.8C6.11984 4 5.27976 4 4.63803 4.32698C4.07354 4.6146 3.6146 5.07354 3.32698 5.63803C3 6.27976 3 7.11984 3 8.8V17.2C3 18.8802 3 19.7202 3.32698 20.362C3.6146 20.9265 4.07354 21.3854 4.63803 21.673C5.27976 22 6.11984 22 7.8 22H12.5M21 10H3M16 2V6M8 2V6M18 21V15M15 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+ </svg>
+  Publish to WordPress
                 </button>
             </div>
         <?php endif; ?>
