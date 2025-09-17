@@ -288,8 +288,9 @@ function buildArticlePrompt($type, $topic, $keywords = [], $instructions = '', $
     $prompt .= "Return strictly **valid JSON only**, without code fences, arrays, or any extra text. (parseable by json_decode in PHP) with keys:\n";
     $prompt .= "{\n";
     $prompt .= "  \"success\": true,\n";
+
     if($type == 'bulk') {
-        $prompt .= "  \"title\": \"Article title for the topic: {$topic}\",\n";
+        $prompt .= "  \"title\": \" Strictly follow this. Article title for the topic must be: {$topic}\",\n";
     } else {
         $prompt .= "  \"title\": \"SEO-friendly title for the article on {$topic}\",\n";
     }
@@ -401,86 +402,58 @@ function generateArticle($type, $db, $project_id, $user_id, $topic, $keywords, $
 }
 
 // Json parse
-function parseAiResponse($aiResponse)
-{
-    // Clean the response first
-    $cleanedResponse = trim($aiResponse);
+// function parseAiResponse($aiResponse)
+// {
+//     // Clean the response first
+//     $cleanedResponse = trim($aiResponse);
 
-    // Try to find JSON in the response
-    $jsonStart = strpos($cleanedResponse, '{');
-    $jsonEnd = strrpos($cleanedResponse, '}');
+//     // Try to find JSON in the response
+//     $jsonStart = strpos($cleanedResponse, '{');
+//     $jsonEnd = strrpos($cleanedResponse, '}');
 
-    if ($jsonStart !== false && $jsonEnd !== false && $jsonEnd > $jsonStart) {
-        $jsonString = substr($cleanedResponse, $jsonStart, $jsonEnd - $jsonStart + 1);
-    } else {
-        // If no obvious JSON structure, try to parse the whole response
-        $jsonString = $cleanedResponse;
-    }
+//     if ($jsonStart !== false && $jsonEnd !== false && $jsonEnd > $jsonStart) {
+//         $jsonString = substr($cleanedResponse, $jsonStart, $jsonEnd - $jsonStart + 1);
+//     } else {
+//         // If no obvious JSON structure, try to parse the whole response
+//         $jsonString = $cleanedResponse;
+//     }
 
-    // Remove any markdown code block markers
-    $jsonString = preg_replace('/```(json)?/i', '', $jsonString);
+//     // Remove any markdown code block markers
+//     $jsonString = preg_replace('/```(json)?/i', '', $jsonString);
 
-    // Decode the JSON
-    $data = json_decode($jsonString, true);
+//     // Decode the JSON
+//     $data = json_decode($jsonString, true);
 
-    // Check if JSON decoding was successful
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        // Try to fix common JSON issues
-        $jsonString = preg_replace('/,\s*([}\]])/', '$1', $jsonString); // Remove trailing commas
-        $jsonString = preg_replace('/([{,]\s*)(\w+)(\s*:)/', '$1"$2"$3', $jsonString); // Add quotes to unquoted keys
+//     // Check if JSON decoding was successful
+//     if (json_last_error() !== JSON_ERROR_NONE) {
+//         // Try to fix common JSON issues
+//         $jsonString = preg_replace('/,\s*([}\]])/', '$1', $jsonString); // Remove trailing commas
+//         $jsonString = preg_replace('/([{,]\s*)(\w+)(\s*:)/', '$1"$2"$3', $jsonString); // Add quotes to unquoted keys
 
-        $data = json_decode($jsonString, true);
+//         $data = json_decode($jsonString, true);
 
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new Exception('Invalid JSON response from AI: ' . json_last_error_msg() . '. Response: ' . substr($aiResponse, 0, 200));
-        }
-    }
+//         if (json_last_error() !== JSON_ERROR_NONE) {
+//             throw new Exception('Invalid JSON response from AI: ' . json_last_error_msg() . '. Response: ' . substr($aiResponse, 0, 200));
+//         }
+//     }
 
-    // Validate the required fields
-    $requiredFields = ['success', 'title', 'meta_description', 'content'];
-    foreach ($requiredFields as $field) {
-        if (!isset($data[$field])) {
-            throw new Exception("Missing required field: $field");
-        }
-    }
+//     // Validate the required fields
+//     $requiredFields = ['success', 'title', 'meta_description', 'content'];
+//     foreach ($requiredFields as $field) {
+//         if (!isset($data[$field])) {
+//             throw new Exception("Missing required field: $field");
+//         }
+//     }
 
-    // Return the parsed data
-    return [
-        'success' => (bool)$data['success'],
-        'title' => $data['title'],
-        'meta_description' => $data['meta_description'],
-        'content' => $data['content']
-    ];
-}
+//     // Return the parsed data
+//     return [
+//         'success' => (bool)$data['success'],
+//         'title' => $data['title'],
+//         'meta_description' => $data['meta_description'],
+//         'content' => $data['content']
+//     ];
+// }
 
-// -------------------- BULK ARTICLE GENERATION --------------------
-function generateBulkArticles($db, $project_id, $user_id, $titles, $settings = [], $keywords = [], $instructions = '')
-{
-    $articles = [];
-
-    foreach ($titles as $title) {
-        $articleSettings = $settings;
-
-        $result = generateArticle($db, $project_id,  $user_id, $title, $keywords, $instructions, $articleSettings);
-
-        if (isset($result['error'])) {
-            // Log error but continue with other articles
-            error_log("Failed to generate article '$title': " . $result['error']);
-            $articles[] = ['title' => $title, 'error' => $result['error']];
-            continue;
-        }
-
-        $articles[] = $result;
-
-        // Add a small delay between requests to avoid rate limiting
-        usleep(500000); // 0.5 seconds
-    }
-
-    return [
-        'success' => true,
-        'articles' => $articles
-    ];
-}
 
 // -------------------- KEYWORD GENERATION --------------------
 function generateKeywords($db, $user_id, $topic, $count = 10)
@@ -620,21 +593,6 @@ try {
             }
 
             $result = generateTitles($db, $user_id, $topic, $count, $keywords);
-            echo json_encode($result);
-            break;
-
-        case 'bulkArticles':
-            $titles = $input['titles'] ?? [];
-            $keywords = $input['keywords'] ?? [];
-            $instructions = $input['instructions'] ?? '';
-            $settings = $input['settings'] ?? [];
-            $project_id = $settings['projectId'] ?? 0;
-
-            if (empty($titles)) {
-                throw new Exception('Titles are required');
-            }
-
-            $result = generateBulkArticles($db, $project_id, $user_id, $titles, $settings, $keywords, $instructions);
             echo json_encode($result);
             break;
 

@@ -149,7 +149,7 @@ $stylesheet = 'article-generator.css';
                             <h4>Step 1: Generate Titles</h4>
                             <form id="title-generation-form">
                                 <div class="form-group">
-                                    <label class="form-label">Main Topic/Niche</label>
+                                    <label class="form-label">Main Topic/Niche <span class="red">*</span></label>
                                     <input class="form-input" id="bulk-topic" placeholder="e.g., Digital Marketing, Health & Fitness, Technology" required>
                                 </div>
 
@@ -163,6 +163,7 @@ $stylesheet = 'article-generator.css';
                                 <div class="form-group">
                                     <label class="form-label">Number of Titles</label>
                                     <select class="form-input form-select" id="title-count">
+                                        <option value="2">2 titles</option>
                                         <option value="5">5 titles</option>
                                         <option value="10">10 titles</option>
                                     </select>
@@ -300,8 +301,8 @@ $stylesheet = 'article-generator.css';
                     <div class="form-group">
                         <label class="form-label">Publish to wordpress?</label>
                         <select class="form-input form-select" id="publish-to-wordpress">
-                            <option value="Yes">Yes</option>
                             <option value="No">No</option>
+                            <option value="Yes">Yes</option>
                         </select>
                     </div>
 
