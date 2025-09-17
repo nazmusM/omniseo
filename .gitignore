@@ -25,3 +25,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Archive files
+Archive.zip
+Archive.tar.gz
+Archive.tar.bz2

@@ -334,7 +334,7 @@ $stylesheet = 'article-generator.css';
 </main>
 </div>
 
-<script src="new.js?v=<?= time(); ?>"></script>
+<script src="article-generator.js?v=<?= time(); ?>"></script>
 </body>
 
 </html>
