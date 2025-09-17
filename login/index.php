@@ -5,7 +5,7 @@ require_once '../includes/auth.php';
 
 // Redirect if already logged in
 if (isset($_SESSION['user_id'])) {
-    header('Location: /dashboard');
+    header('Location: ../dashboard');
     exit();
 }
 ?>

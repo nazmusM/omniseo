@@ -177,10 +177,6 @@
 .title-item {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
   margin-bottom: var(--spacing-sm);
   transition: all 0.2s ease;
 }

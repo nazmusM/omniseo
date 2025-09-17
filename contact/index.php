@@ -5,7 +5,7 @@ $stylesheet = 'contact';
 
 <?php include('../includes/header.php');?>
 
-<main class="main">
+<div class="main">
     <div class="contact-header">
         <h1>Get in Touch</h1>
         <p>Have questions about OmniSEO? We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
@@ -119,7 +119,7 @@ $stylesheet = 'contact';
     <div class="map-container">
         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.184052371048!2d-73.987614424522!3d40.75831467138846!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855b8fb3083%3A0xa0f9aef176042a5c!2sTimes%20Square!5e0!3m2!1sen!2sus!4v1694635587167!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>
     </div>
-</main>
+        </div>
 
 <?php include("../includes/footer.php") ?>
 

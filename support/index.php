@@ -5,7 +5,7 @@ $stylesheet = 'support';
 
 <?php include('../includes/header.php');?>
 
-<main class="main">
+<div class="main">
     <div class="support-header">
         <h1>OmniSEO Support Center</h1>
         <p>Find answers, guides, and resources to help you get the most out of OmniSEO</p>
@@ -172,7 +172,7 @@ $stylesheet = 'support';
             </a>
         </div>
     </div>
-</main>
+</div>
 
 <?php include("../includes/footer.php") ?>
 

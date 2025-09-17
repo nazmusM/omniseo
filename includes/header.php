@@ -6,12 +6,6 @@ $basePath = ($_SERVER['REQUEST_URI'] == '/' ? '' : '../');
 
 require_once $basePath . "includes/config.php";
 require_once $basePath . "includes/auth.php";
-
-// Redirect if already logged in
-if ($auth->isLoggedIn()) {
-    header('Location:' . $basePath . 'dashboard');
-    exit;
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -31,6 +25,7 @@ if ($auth->isLoggedIn()) {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         :root {

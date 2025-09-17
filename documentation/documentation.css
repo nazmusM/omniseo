@@ -485,6 +485,10 @@ body {
     .docs-header p {
         font-size: var(--font-size-lg);
     }
+
+    .docs-content{
+        padding: 0;
+    }
     
     .how-it-works-grid,
     .feature-grid {

@@ -5,7 +5,7 @@ $stylesheet = 'documentation';
 
 <?php include('../includes/header.php');?>
 
-<main class="main">
+<div class="main">
     <div class="docs-header">
         <h1>How OmniSEO Works</h1>
         <p>Learn how our AI-powered platform helps you create high-quality, SEO-optimized content in minutes</p>
@@ -304,7 +304,7 @@ $stylesheet = 'documentation';
             </div>
         </div>
     </div>
-</main>
+</div>
 
 <?php include("../includes/footer.php") ?>
 

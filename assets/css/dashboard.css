@@ -75,6 +75,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -475,12 +476,16 @@ body {
 
   .main-content {
     margin-left: 0;
-    padding: var(--spacing-lg);
+    padding: var(--spacing-md);
   }
 
   .stats-grid {
     grid-template-columns: 1fr;
   }
+
+  .card-content {
+  padding: var(--spacing-md);
+}
 }
 
 /* Loading States */

@@ -81,7 +81,7 @@ body {
     background-color: var(--gray-50);
 }
 
-.main {
+.main-content {
     max-width: 1200px;
     margin: 0 auto;
     padding: var(--spacing-xl) var(--spacing-lg);
@@ -493,7 +493,7 @@ body {
 }
 
 @media (max-width: 768px) {
-    .main {
+    .main-content {
         padding: var(--spacing-md);
     }
     

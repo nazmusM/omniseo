@@ -5,7 +5,7 @@ $stylesheet = 'about';
 
 <?php include('../includes/header.php');?>
 
-<main class="main">
+<div class="main">
     <div class="about-hero">
         <h1>Revolutionizing Content Creation with AI</h1>
         <p>OmniSEO empowers creators, marketers, and businesses to generate high-quality, SEO-optimized content in minutes, not hours.</p>
@@ -118,7 +118,7 @@ $stylesheet = 'about';
         <p>Join thousands of creators who are already using OmniSEO to save time and elevate their content.</p>
         <a href="../register/" class="cta-button">Get Started Free</a>
     </div>
-</main>
+</div>
 
 <?php include("../includes/footer.php") ?>
 

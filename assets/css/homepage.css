@@ -1255,7 +1255,7 @@
     }
 
   .hero {
-    padding: var(--spacing-2xl);
+    padding: var(--spacing-2xl) 0;
   }
 
   .hero-cta {

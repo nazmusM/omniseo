@@ -5,7 +5,7 @@ $stylesheet = 'blog';
 
 <?php include('../includes/header.php');?>
 
-<main class="main">
+<div class="main-content">
     <div class="blog-header">
         <h1>OmniSEO Blog</h1>
         <p>Insights, tips, and strategies for content creation, SEO, and AI-powered writing</p>
@@ -289,7 +289,7 @@ $stylesheet = 'blog';
             </div>
         </div>
     </div>
-</main>
+</div>
 
 <?php include("../includes/footer.php") ?>
 

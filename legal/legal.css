@@ -69,8 +69,8 @@ p {
   margin-bottom: var(--spacing-md);
 }
 
-ul,
-ol {
+.main ul,
+.main ol {
   margin-bottom: var(--spacing-md);
   padding-left: var(--spacing-xl);
 }
@@ -131,29 +131,7 @@ footer {
 }
 
 @media (max-width: 768px) {
-  .nav-toggle {
-    display: block;
-  }
-
-  nav {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    background-color: var(--white);
-    box-shadow: var(--shadow-md);
-    padding: var(--spacing-md);
-    display: none;
-  }
-
-  nav.active {
-    display: block;
-  }
-
-  nav ul {
-    flex-direction: column;
-    gap: var(--spacing-md);
-  }
+ 
 
   .legal-tabs {
     flex-direction: column;
@@ -162,6 +140,10 @@ footer {
   .tab-btn {
     text-align: left;
     padding: var(--spacing-md);
+  }
+
+  .tab-content {
+    padding: 0;
   }
 
   .footer-content {

@@ -5,7 +5,7 @@ $stylesheet = 'legal';
 
 <?php include('../includes/header.php');?>
 
-<main class="main">
+<div class="main">
         <div class="legal-tabs">
             <button class="tab-btn active" data-tab="privacy">Privacy Policy</button>
             <button class="tab-btn" data-tab="terms">Terms of Service</button>
@@ -176,7 +176,7 @@ $stylesheet = 'legal';
             <p>Email: legal@omniseo.com<br>
             Address: 123 AI Drive, Tech City, TC 12345</p>
         </div>
-    </main>
+</div>
 
     <?php include("../includes/footer.php") ?>
 

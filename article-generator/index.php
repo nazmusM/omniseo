@@ -57,8 +57,8 @@ $stmt->execute();
 $user_credits = $stmt->get_result()->fetch_assoc()['credits'];
 $stmt->close();
 
-$articleStmt = $db->prepare("SELECT id, title FROM articles WHERE project_id = ?");
-$articleStmt->bind_param('i', $project_id);
+$articleStmt = $db->prepare("SELECT id, title FROM articles WHERE project_id = ? AND user_id = ? ORDER BY created_at DESC");
+$articleStmt->bind_param('ii', $project_id, $user_id);
 $articleStmt->execute();
 $result = $articleStmt->get_result();
 $articles = [];
@@ -265,9 +265,9 @@ $stylesheet = 'article-generator.css';
                     <div class="form-group">
                         <label class="form-label">Article Length</label>
                         <select class="form-input form-select" id="article-length">
-                            <option value="1500">Short (1000-1500 words)</option>
-                            <option value="2000">Medium (1500-2000 words)</option>
-                            <option value="2500">Long (2000-3000 words)</option>
+                            <option value="1500">Short</option>
+                            <option value="2000">Medium</option>
+                            <option value="2500">Long</option>
                         </select>
                     </div>
 
@@ -300,7 +300,7 @@ $stylesheet = 'article-generator.css';
 
                     <div class="form-group">
                         <label class="form-label">Publish to wordpress?</label>
-                        <select class="form-input form-select" id="publish-to-wordpress">
+                        <select class="form-input form-select" id="publish-to-wordpress" disabled>
                             <option value="No">No</option>
                             <option value="Yes">Yes</option>
                         </select>
@@ -308,7 +308,7 @@ $stylesheet = 'article-generator.css';
 
                     <div class="form-group">
                         <label class="form-label">Publish Status</label>
-                        <select class="form-input form-select" id="publish-status">
+                        <select class="form-input form-select" id="publish-status" disabled>
                             <option value="Publish">Publish</option>
                             <option value="Schedule">Schedule</option>
                         </select>
