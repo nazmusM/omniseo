@@ -160,22 +160,7 @@ $stylesheet = 'account.css';
                 <p class="integration-description">
                     Connect your WordPress site to automatically publish generated articles.
                 </p>
-
-                <form>
-                    <div class="form-group">
-                        <label class="form-label">WordPress Site URL</label>
-                        <input type="url" class="form-input" placeholder="https://yoursite.com" disabled>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Application Password</label>
-                        <input type="password" class="form-input" placeholder="WordPress application password" disabled>
-                    </div>
-
-                    <button type="button" class="btn btn-secondary" disabled>
-                        Connect WordPress (Coming Soon)
-                    </button>
-                </form>
+                <a href="../websites" class="btn btn-primary">Add Websites</a>
             </div>
         </div>
     </div>

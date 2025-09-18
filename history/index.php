@@ -135,8 +135,6 @@ $stylesheet = 'history.css';
 <script src="history.js?v=<?= time() ?>"></script>
 <script>
     async function deleteArticle(id) {
-
-        // Basic confirmation
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -180,7 +178,7 @@ $stylesheet = 'history.css';
                 }
                 Swal.fire(
                     'Deleted!',
-                    'Project has been deleted.',
+                    'Article has been deleted.',
                     'success'
                 ).then((result) => {
                     if (result.isConfirmed) {

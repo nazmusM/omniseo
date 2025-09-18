@@ -42,7 +42,12 @@ $result = $stmt->get_result();
 $projects = $result->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
 
-
+$wpStmt = $db->prepare("SELECT wp_name, wp_url, status FROM wp_accounts WHERE user_id = ?");
+$wpStmt->bind_param("i", $user_id);
+$wpStmt->execute();
+$wpResult = $wpStmt->get_result();
+$wp_urls = $wpResult->fetch_all(MYSQLI_ASSOC);
+$wpStmt->close();
 
 
 $title = 'Projects';
@@ -154,11 +159,12 @@ $stylesheet = 'projects.css';
                     <div class="form-group">
                         <label for="wp_url" class="form-label">WordPress Site URL</label>
                         <select name="wp_url" id="wp_url" class="form-select">
-                            <option value="https://nazmustech.com">https://nazmustech.com</option>
-                            <option value="https://nazmustech.com">https://nazmustech.com</option>
-                            <option value="https://nazmustech.com">https://nazmustech.com</option>
-                            <option value="https://nazmustech.com">https://nazmustech.com</option>
-                            <option value="https://nazmustech.com">https://nazmustech.com</option>
+                            <?php foreach ($wp_urls as $wp): ?>
+                                <option value="<?php echo htmlspecialchars($wp['wp_url']); ?>" <?php if ($wp['status'] !== 'connected') echo 'disabled'; ?>>
+                                    <?php echo htmlspecialchars($wp['wp_name']) . ' (' . htmlspecialchars($wp['wp_url']) . ')'; ?>
+                                    <?php if ($wp['status'] !== 'connected') echo ' - Not Connected'; ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                 </div>

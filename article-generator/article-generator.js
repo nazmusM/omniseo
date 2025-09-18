@@ -375,3 +375,113 @@ function addTick(element, show) {
     }
   }
 }
+
+function selectAll() {
+  const checkboxes = document.querySelectorAll(".article-checkbox");
+  checkboxes.forEach((checkbox) => {
+    checkbox.checked = true;
+  });
+}
+
+function deleteArticle(id) {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const formData = new FormData();
+        formData.append("action", "deleteArticle");
+        formData.append("id", id);
+
+        const response = await fetch("../api/delete.php", {
+          method: "POST",
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          Swal.fire({
+            title: "Success",
+            text: result.message,
+            icon: "success",
+          });
+        } else {
+          Swal.fire({
+            title: "Error",
+            text: result.message,
+            icon: "error",
+          });
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("An error occurred while deleting the item");
+      }
+      Swal.fire("Deleted!", "Article has been deleted.", "success").then(
+        (result) => {
+          if (result.isConfirmed) {
+            location.reload();
+          }
+        }
+      );
+    }
+  });
+}
+
+
+function publishArticle(id) {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You are about to publish this article.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, publish it!",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const formData = new FormData();
+        formData.append("action", "publishArticle");
+        formData.append("id", id);
+
+        const response = await fetch("../api/publish.php", {
+          method: "POST",
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          Swal.fire({
+            title: "Success",
+            text: result.message,
+            icon: "success",
+          });
+        } else {
+          Swal.fire({
+            title: "Error",
+            text: result.message,
+            icon: "error",
+          });
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("An error occurred while publishing the article");
+      }
+      Swal.fire("Published!", "Article has been published.", "success").then(
+        (result) => {
+          if (result.isConfirmed) {
+            location.reload();
+          }
+        }
+      );
+    }
+  });
+}
