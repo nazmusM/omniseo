@@ -376,13 +376,6 @@ function addTick(element, show) {
   }
 }
 
-function selectAll() {
-  const checkboxes = document.querySelectorAll(".article-checkbox");
-  checkboxes.forEach((checkbox) => {
-    checkbox.checked = true;
-  });
-}
-
 function deleteArticle(id) {
   Swal.fire({
     title: "Are you sure?",

@@ -30,7 +30,7 @@ function loadEnv($path)
 loadEnv(__DIR__ . '/../.env');
 
 // Database configuration
-$prod = false;
+$prod = true;
 
 if ($prod) {
     define('DB_HOST', $_ENV['DB_HOST']);
