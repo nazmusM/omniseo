@@ -339,7 +339,7 @@ $stylesheet = 'article-generator.css';
             <h1 class="page-title">Generated Articles</h1>
         </div>
         <div class="schedule-section">
-            <input id="datetimepicker1" class="form-input" style="width: min-content;">
+            <input id="datetimepicker1" placeholder="Select date and time" class="form-input" style="width: min-content;">
             <select class="form-input form-select" id="wp_accounts">
                 <option value="">Select WP Account</option>
                 <?php foreach ($wp_accounts as $wp_account): ?>

@@ -61,7 +61,8 @@ function showToast(type = "info", message) {
       toast.onmouseleave = Swal.resumeTimer;
     },
   });
-  Toast.fire({
+
+return  Toast.fire({
     icon: type,
     title: message,
   });
@@ -69,24 +70,24 @@ function showToast(type = "info", message) {
 
 //Modal functions
 
-const modal = document.getElementById("modal");
+const customModal = document.getElementById("modal");
 const closeModalBtn = document.getElementById("modalCloseBtn");
 const cancelBtn = document.getElementById("cancelBtn");
 
 function openModal() {
-  modal.style.display = "flex";
+  customModal.style.display = "flex";
   document.body.style.overflow = "hidden"; // Prevent scrolling
 }
 
 // Function to close modal
 function closeModal() {
-  modal.style.display = "none";
+  customModal.style.display = "none";
   document.body.style.overflow = "auto"; // Allow scrolling
 }
 
 // Close modal when clicking outside
 window.onclick = function (event) {
-  if (event.target === modal) {
+  if (event.target === customModal) {
     closeModal();
   }
 };
@@ -137,20 +138,6 @@ document.addEventListener("DOMContentLoaded", function () {
   if (cancelBtn) {
     cancelBtn.addEventListener("click", closeModal);
   }
-
-  // Close modal when clicking outside of it
-  window.addEventListener("click", function (event) {
-    if (event.target === modal) {
-      closeModal();
-    }
-  });
-
-  // Close modal with Escape key
-  document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape" && modal.style.display === "flex") {
-      closeModal();
-    }
-  });
 
   // Form validation
   const projectForm = document.querySelector(".modal-form");
@@ -487,10 +474,8 @@ document.addEventListener("DOMContentLoaded", () => {
         // Close loading indicator
         btnLoader(updateProfile, false);
         if (data.success) {
-          // Registration successful
           showAlert("success", data.message).then((result) => {
             if (result.isConfirmed) {
-              // Redirect to login page or dashboard
               window.location.reload();
             }
           });

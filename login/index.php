@@ -20,7 +20,7 @@ if (isset($_SESSION['user_id'])) {
     <link rel="stylesheet" href="../assets/css/dashboard.css?v=<?= time(); ?>">
     <link rel="stylesheet" href="login.css?v=<?= time(); ?>">
     <script src="../assets/sweetalert/sweetalert.min.js"></script>
-    script src="../assets/js/main.js?v=<?= time(); ?>"></script>
+    <script defer src="../assets/js/main.js?v=<?= time(); ?>"></script>
 </head>
 
 <body>
@@ -73,7 +73,6 @@ if (isset($_SESSION['user_id'])) {
         </div>
     </div>
     <script src="login.js?v=<?= time(); ?>"></script>
-    <script src="../assets/js/main.js?v=<?= time(); ?>"></script>
 </body>
 
 </html>
