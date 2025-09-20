@@ -363,7 +363,8 @@
   }
 
   .schedule-section .btn,
-  .schedule-section select{
+  .schedule-section select,
+  .schedule-section input{
     width: 100% !important;
     margin-bottom: var(--spacing-sm);
   }

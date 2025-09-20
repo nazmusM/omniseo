@@ -339,7 +339,7 @@ $stylesheet = 'article-generator.css';
             <h1 class="page-title">Generated Articles</h1>
         </div>
         <div class="schedule-section">
-            <input type="date" id="schedule-date" class="form-input" style="width: max-content;">
+            <input type="date" id="schedule-date" class="form-input" style="width: min-content;">
             <select class="form-input form-select" id="wp_accounts">
                 <option value="">Select WP Account</option>
                 <?php foreach ($wp_accounts as $wp_account): ?>

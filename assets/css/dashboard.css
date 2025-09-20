@@ -123,11 +123,6 @@ body {
   border-color: #ffecb5;
 }
 
-.dashboard-layout {
-  display: flex;
-  min-height: 100vh;
-}
-
 /* Navbar */
 .navbar{
   position: fixed;
