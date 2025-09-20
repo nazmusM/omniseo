@@ -144,11 +144,11 @@ $stylesheet = 'projects.css';
     </div>
 
     <!-- Create Project Modal -->
-    <div id="createProjectModal" class="modal">
+    <div id="modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Create New Project</h2>
-                <button class="modal-close">&times;</button>
+                <button class="modal-close" id="modalCloseBtn">&times;</button>
             </div>
             <form method="POST" class="modal-form">
                 <div class="modal-body">
@@ -169,73 +169,13 @@ $stylesheet = 'projects.css';
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="modal-btn btn btn-secondary small-width" id="cancelProject">Cancel</button>
+                    <button type="button" class="modal-btn btn btn-secondary small-width" id="cancelBtn">Cancel</button>
                     <button type="submit" name="create_project" class="modal-btn btn btn-primary small-width create-btn">Create Project</button>
                 </div>
             </form>
         </div>
     </div>
 </main>
-<script src="projects.js?v=<?= time() ?>"></script>
-<script>
-    async function deleteProject(id) {
-
-        // Basic confirmation
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-
-
-                try {
-                    const formData = new FormData();
-                    formData.append('action', 'deleteProject');
-                    formData.append('id', id);
-
-                    const response = await fetch('../api/delete.php', {
-                        method: 'POST',
-                        body: formData
-                    });
-
-                    const result = await response.json();
-
-                    if (result.success) {
-                        Swal.fire({
-                            title: "Success",
-                            text: result.message,
-                            icon: "success",
-                        });
-                    } else {
-                        Swal.fire({
-                            title: "Error",
-                            text: result.message,
-                            icon: "error",
-                        })
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('An error occurred while deleting the item');
-                }
-                Swal.fire(
-                    'Deleted!',
-                    'Project has been deleted.',
-                    'success'
-                ).then((result) => {
-                    if (result.isConfirmed) {
-                        location.reload();
-                    }
-                });
-
-            }
-        })
-    }
-</script>
 </body>
 
 </html>

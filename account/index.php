@@ -166,8 +166,6 @@ $stylesheet = 'account.css';
     </div>
 </main>
 </div>
-
-<script src="account.js?v=<?= time(); ?>"></script>
 </body>
 
 </html>

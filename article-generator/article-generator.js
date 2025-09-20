@@ -1,17 +1,4 @@
 // article-generator.js
-
-const Toast = Swal.mixin({
-  toast: true,
-  position: "top-end",
-  showConfirmButton: false,
-  timer: 3000,
-  timerProgressBar: true,
-  didOpen: (toast) => {
-    toast.onmouseenter = Swal.stopTimer;
-    toast.onmouseleave = Swal.resumeTimer;
-  },
-});
-
 document.addEventListener("DOMContentLoaded", function () {
   // Tab navigation
   const tabButtons = document.querySelectorAll(".tab-btn");
@@ -221,19 +208,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // Optional: show progress to user
-        Toast.fire({
-          icon: "info",
-          title: `Generated ${i + 1}/${titles.length} articles...`,
-        });
+        showToast("info", `Generated ${i + 1}/${titles.length} articles...`);
       } catch (err) {
         console.error("Error generating article:", err);
       }
     }
 
-    Toast.fire({
-      icon: "success",
-      title: `${successCount}/${titles.length} articles generated successfully!`,
-    });
+    showToast(
+      "info",
+      `${successCount}/${titles.length} articles generated successfully!`
+    );
   });
 
   // Update cost when image generation is toggled
@@ -427,7 +411,6 @@ function deleteArticle(id) {
   });
 }
 
-
 function publishArticle(id) {
   Swal.fire({
     title: "Are you sure?",
@@ -478,3 +461,41 @@ function publishArticle(id) {
     }
   });
 }
+
+
+flatpickr("#datetimepicker1", {
+  enableTime: true,
+  dateFormat: "Y-m-d H:i",
+  minDate: "today",
+});
+
+
+function openCalendar(articleId) {
+  Swal.fire({
+    title: "Pick a schedule",
+    html: '<input id="datetimepicker2" class="swal2-input" placeholder="Select date & time">',
+    focusConfirm: false,
+    showCancelButton: true,
+    confirmButtonText: "Confirm",
+    didOpen: () => {
+      flatpickr("#datetimepicker2", {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+        minDate: "today",
+      });
+    },
+    preConfirm: () => {
+      const selected = document.getElementById("datetimepicker2").value;
+      if (!selected) {
+        Swal.showValidationMessage("Please select a date and time");
+      }
+      return selected;
+    },
+  }).then((result) => {
+    if (result.isConfirmed) {
+      scheduleTask(result.value, articleId);
+    }
+  });
+}
+
+

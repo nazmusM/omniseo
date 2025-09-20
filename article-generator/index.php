@@ -84,7 +84,7 @@ $stylesheet = 'article-generator.css';
 ?>
 
 <?php include '../includes/sidebar.php'; ?>
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <main class="main-content">
     <div class="page-header">
         <div class="header-flex">
@@ -339,7 +339,7 @@ $stylesheet = 'article-generator.css';
             <h1 class="page-title">Generated Articles</h1>
         </div>
         <div class="schedule-section">
-            <input type="date" id="schedule-date" class="form-input" style="width: min-content;">
+            <input id="datetimepicker1" class="form-input" style="width: min-content;">
             <select class="form-input form-select" id="wp_accounts">
                 <option value="">Select WP Account</option>
                 <?php foreach ($wp_accounts as $wp_account): ?>
@@ -353,33 +353,33 @@ $stylesheet = 'article-generator.css';
                 <?php foreach ($articles as $article): ?>
                     <div class="article">
                         <div class="left-btns">
-                        <input type="checkbox" class="article-checkbox" data-id="article-<?= $article['id'] ?>">
-                        <?php if ($article['status'] === 'published'): ?>
-                            <span class="status published">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" color="var(--success)" xmlns="http://www.w3.org/2000/svg">
- <path d="M2.33938 14.5896C1.44846 11.2534 2.31164 7.54623 4.92893 4.92893C8.83418 1.02369 15.1658 1.02369 19.0711 4.92893C22.9763 8.83418 22.9763 15.1658 19.0711 19.0711C16.4538 21.6884 12.7466 22.5515 9.41045 21.6606M15.0001 15.0001V9.0001M15.0001 9.0001H9.00014M15.0001 9.0001L4.99995 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
- </svg>
-                            </span>
-                        <?php elseif ($article['status'] === 'scheduled'): ?>
-                            <span class="status scheduled">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" color="var(--success)" xmlns="http://www.w3.org/2000/svg">
- <path d="M12 6V12L16 14M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
- </svg>
-                            </span>
-                        <?php else: ?>
-                            <span class="status draft">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" color="var(--grey-500) xmlns="http://www.w3.org/2000/svg">
- <path d="M20 9.5V6.8C20 5.11984 20 4.27976 19.673 3.63803C19.3854 3.07354 18.9265 2.6146 18.362 2.32698C17.7202 2 16.8802 2 15.2 2H8.8C7.11984 2 6.27976 2 5.63803 2.32698C5.07354 2.6146 4.6146 3.07354 4.32698 3.63803C4 4.27976 4 5.11984 4 6.8V17.2C4 18.8802 4 19.7202 4.32698 20.362C4.6146 20.9265 5.07354 21.3854 5.63803 21.673C6.27976 22 7.11984 22 8.8 22H14M16.5 15.0022C16.6762 14.5014 17.024 14.079 17.4817 13.81C17.9395 13.5409 18.4777 13.4426 19.001 13.5324C19.5243 13.6221 19.999 13.8942 20.3409 14.3004C20.6829 14.7066 20.87 15.2207 20.8692 15.7517C20.8692 17.2506 18.6209 18 18.6209 18M18.65 21H18.66" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
- </svg>    </span>
-                        <?php endif; ?>
+                            <input type="checkbox" class="article-checkbox" data-id="article-<?= $article['id'] ?>">
+                            <?php if ($article['status'] === 'published'): ?>
+                                <span class="status published">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" color="var(--success)" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M2.33938 14.5896C1.44846 11.2534 2.31164 7.54623 4.92893 4.92893C8.83418 1.02369 15.1658 1.02369 19.0711 4.92893C22.9763 8.83418 22.9763 15.1658 19.0711 19.0711C16.4538 21.6884 12.7466 22.5515 9.41045 21.6606M15.0001 15.0001V9.0001M15.0001 9.0001H9.00014M15.0001 9.0001L4.99995 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </span>
+                            <?php elseif ($article['status'] === 'scheduled'): ?>
+                                <span class="status scheduled">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" color="var(--success)" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 6V12L16 14M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </span>
+                            <?php else: ?>
+                                <span class="status draft">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" color="var(--grey-500)" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M20 9.5V6.8C20 5.11984 20 4.27976 19.673 3.63803C19.3854 3.07354 18.9265 2.6146 18.362 2.32698C17.7202 2 16.8802 2 15.2 2H8.8C7.11984 2 6.27976 2 5.63803 2.32698C5.07354 2.6146 4.6146 3.07354 4.32698 3.63803C4 4.27976 4 5.11984 4 6.8V17.2C4 18.8802 4 19.7202 4.32698 20.362C4.6146 20.9265 5.07354 21.3854 5.63803 21.673C6.27976 22 7.11984 22 8.8 22H14M16.5 15.0022C16.6762 14.5014 17.024 14.079 17.4817 13.81C17.9395 13.5409 18.4777 13.4426 19.001 13.5324C19.5243 13.6221 19.999 13.8942 20.3409 14.3004C20.6829 14.7066 20.87 15.2207 20.8692 15.7517C20.8692 17.2506 18.6209 18 18.6209 18M18.65 21H18.66" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg> </span>
+                            <?php endif; ?>
                         </div>
                         <div class="flex">
                             <a href="../article?id=<?= $article['id'] ?>"> <?= $article['title'] ?></a>
                             <div class="action-btns">
                                 <div class="calender-btn" onclick="openCalendar(<?= $article['id'] ?>)" title="Schedule Article">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
- <path d="M21 10H3M16 2V6M8 2V6M10.5 14L12 13V18M10.75 18H13.25M7.8 22H16.2C17.8802 22 18.7202 22 19.362 21.673C19.9265 21.3854 20.3854 20.9265 20.673 20.362C21 19.7202 21 18.8802 21 17.2V8.8C21 7.11984 21 6.27976 20.673 5.63803C20.3854 5.07354 19.9265 4.6146 19.362 4.32698C18.7202 4 17.8802 4 16.2 4H7.8C6.11984 4 5.27976 4 4.63803 4.32698C4.07354 4.6146 3.6146 5.07354 3.32698 5.63803C3 6.27976 3 7.11984 3 8.8V17.2C3 18.8802 3 19.7202 3.32698 20.362C3.6146 20.9265 4.07354 21.3854 4.63803 21.673C5.27976 22 6.11984 22 7.8 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
- </svg>
+                                        <path d="M21 10H3M16 2V6M8 2V6M10.5 14L12 13V18M10.75 18H13.25M7.8 22H16.2C17.8802 22 18.7202 22 19.362 21.673C19.9265 21.3854 20.3854 20.9265 20.673 20.362C21 19.7202 21 18.8802 21 17.2V8.8C21 7.11984 21 6.27976 20.673 5.63803C20.3854 5.07354 19.9265 4.6146 19.362 4.32698C18.7202 4 17.8802 4 16.2 4H7.8C6.11984 4 5.27976 4 4.63803 4.32698C4.07354 4.6146 3.6146 5.07354 3.32698 5.63803C3 6.27976 3 7.11984 3 8.8V17.2C3 18.8802 3 19.7202 3.32698 20.362C3.6146 20.9265 4.07354 21.3854 4.63803 21.673C5.27976 22 6.11984 22 7.8 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
                                 </div>
                                 <div class="publish-btn" onclick="publishArticle(<?= $article['id'] ?>)" title="Publish Article">
                                     <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -405,8 +405,9 @@ $stylesheet = 'article-generator.css';
     </div>
 </main>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script defer src="article-generator.js?v=<?= time(); ?>"></script>
 
-<script src="article-generator.js?v=<?= time(); ?>"></script>
 </body>
 
 </html>
