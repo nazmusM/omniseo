@@ -29,7 +29,7 @@ if (isset($_SESSION['user_id'])) {
                 <p class="auth-subtitle">Join omniSEO and start generating amazing content</p>
             </div>
 
-            <form method="POST" class="auth-form">
+            <form method="POST" class="signup-form">
                 <div class="form-group">
                     <label class="form-label">Name</label>
                     <input type="text" class="form-input" name="name" value="<?php echo htmlspecialchars($_POST['name'] ?? ''); ?>" required>
@@ -99,7 +99,6 @@ if (isset($_SESSION['user_id'])) {
     </div>
     <script src="../assets/sweetalert/sweetalert.min.js"></script>
     <script src="../assets/js/main.js?v=<?= time(); ?>"></script>
-    <script src="signup.js?v=<?= time(); ?>"></script>
 </body>
 
 </html>

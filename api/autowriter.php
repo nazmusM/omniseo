@@ -1,8 +1,6 @@
 <?php
 ini_set("display_errors", 1);
 error_reporting(E_ALL);
-
-// omniSEO API Endpoint
 require_once '../includes/config.php';
 require_once '../includes/auth.php';
 require_once '../includes/db.php';
@@ -606,24 +604,6 @@ try {
 
             $result = generateKeywords($db, $user_id, $topic, $count);
             echo json_encode($result);
-            break;
-
-        case 'createProject':
-            $project_name = $input['project_name'] ?? '';
-            $wp_url = $input['wp_url'] ?? '';
-
-            if (empty($project_name) || empty($wp_url)) {
-                throw new Exception('Please enter details of the project.');
-            }
-
-            $stmt = $db->prepare("INSERT INTO projects(user_id, name, wp_url) VALUES(?, ?, ?)");
-            $stmt->bind_param('iss', $user_id, $project_name, $wp_url);
-
-            if ($stmt->execute()) {
-                echo json_encode(['success' => true, 'message' => 'Project created successfully.']);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'Failed to create project. Please try again later.']);
-            }
             break;
 
         default:

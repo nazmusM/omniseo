@@ -31,7 +31,7 @@ if (isset($_SESSION['user_id'])) {
                 <p class="auth-subtitle">Sign in to your omniSEO account</p>
             </div>
 
-            <form method="POST" class="auth-form">
+            <form method="POST" class="login-form">
                 <div class="form-group">
                     <label class="form-label" for="email">Email Address</label>
                     <input type="email" class="form-input" name="email" id="email" required>
@@ -72,7 +72,6 @@ if (isset($_SESSION['user_id'])) {
             </div>
         </div>
     </div>
-    <script src="login.js?v=<?= time(); ?>"></script>
 </body>
 
 </html>
