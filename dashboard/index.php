@@ -112,8 +112,6 @@ $title = 'Dashboard';
             </div>
         </main>
     </div>
-
-    <script src="dashboard.js?v=<?=time();?>"></script>
 </body>
 </html>
 

@@ -2,9 +2,9 @@
 ini_set("display_errors", 1);
 require('includes/config.php');
 
-require 'PHPMailer/src/Exception.php';
-require 'PHPMailer/src/PHPMailer.php';
-require 'PHPMailer/src/SMTP.php';
+require 'phpmailer/Exception.php';
+require 'phpmailer/PHPMailer.php';
+require 'phpmailer/SMTP.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -20,13 +20,13 @@ function sendMail($to, $subject, $body, $altBody = '', $attachments = [], $cc = 
         $mail->isSMTP();
         $mail->Host       = $_ENV['SMTP_HOST'];
         $mail->SMTPAuth   = true;
-        $mail->Username   = $_ENV['SMTP_USERNAME'];
-        $mail->Password   = $_ENV['SMTP_PASSWORD'];
+        $mail->Username   = $_ENV['SMTP_USER'];
+        $mail->Password   = $_ENV['SMTP_PASS'];
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-        $mail->Port       = 465;
+        $mail->Port       = $_ENV['SMTP_PORT'];
 
         // Recipients
-        $mail->setFrom($_ENV['FROM_EMAIL'], $_ENV['FROM_NAME']);
+        $mail->setFrom($_ENV['SMTP_USER'], $_ENV['FROM_NAME']);
         $mail->addAddress($to);
         $mail->addReplyTo($_ENV['REPLY_TO_EMAIL'], $_ENV['REPLY_TO_NAME']);
 
